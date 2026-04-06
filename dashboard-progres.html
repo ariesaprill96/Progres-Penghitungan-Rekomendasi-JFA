@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -1374,7 +1374,7 @@
   <div class="header-actions">
     <button class="admin-chip warn" id="adminStatusBtn" type="button" onclick="openAdminLogin()">Mode baca</button>
     <button class="admin-chip primary" id="adminAccessBtn" type="button" onclick="openAdminLogin()">Login Admin</button>
-    <div class="header-badge" id="lastUpdate">—</div>
+    <div class="header-badge" id="lastUpdate">-</div>
   </div>
 </div>
 
@@ -1409,7 +1409,7 @@
 </div>
 
 <div class="filter-section">
-  <div class="filter-title">🔍 Filter Data</div>
+  <div class="filter-title">Filter Data</div>
   <div class="filter-grid">
     <div class="filter-group">
       <label>Kategori Instansi</label>
@@ -1465,7 +1465,7 @@
     </div>
     <div class="filter-group">
       <label>&nbsp;</label>
-      <button class="btn-reset" onclick="resetFilters()">↺ Reset Filter</button>
+      <button class="btn-reset" onclick="resetFilters()">Reset Filter</button>
     </div>
   </div>
 </div>
@@ -1476,8 +1476,8 @@
   <div class="table-header">
     <div class="table-count">Menampilkan <span id="countDisplay">0</span> instansi</div>
     <div class="table-actions">
-      <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
-      <button class="btn-add" onclick="openModal()">＋ Tambah Data</button>
+      <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+      <button class="btn-add" onclick="openModal()">ï¼‹ Tambah Data</button>
     </div>
   </div>
   <div class="table-wrapper">
@@ -1496,7 +1496,7 @@
       <tbody id="tableBody"></tbody>
     </table>
     <div class="empty-state" id="emptyState" style="display:none">
-      <div class="icon">🔍</div>
+      <div class="icon">Cari</div>
       <p>Tidak ada data yang sesuai filter</p>
     </div>
   </div>
@@ -1524,7 +1524,7 @@
       <div class="form-group full">
         <label>Kategori</label>
         <div class="select-wrapper">
-          <select id="formKategori">
+          <select id="formKategori" onchange="syncUnitFieldLabel()">
             <option value="Instansi Pusat">Instansi Pusat</option>
             <option value="Pemerintah Daerah Provinsi">Pemerintah Daerah Provinsi</option>
             <option value="Pemerintah Daerah Kab/Kota">Pemerintah Daerah Kab/Kota</option>
@@ -1570,11 +1570,11 @@
       </div>
       <div class="form-group">
         <label>Hari Progres (otomatis)</label>
-        <div class="hari-preview" id="hariPreview">— isi tanggal disposisi</div>
+        <div class="hari-preview" id="hariPreview">- isi tanggal disposisi</div>
       </div>
 
       <div class="form-group">
-        <label>Unit Kerja/OPD</label>
+        <label id="unitFieldLabel">Unit Kerja</label>
         <input type="number" id="formOPD" min="0" value="0">
       </div>
       <div class="form-group">
@@ -1719,8 +1719,16 @@ function hitungHari(tglMulai, tglSelesai = '') {
 }
 function hariCls(h) { return h===null?'hari-none':h<=14?'hari-ok':h<=30?'hari-warn':'hari-danger'; }
 function fmtTgl(tgl) {
-  if (!tgl) return '—';
+  if (!tgl) return '-';
   return new Date(tgl).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+}
+function getUnitFieldLabel(kategori) {
+  return kategori === 'Instansi Pusat' ? 'Unit Kerja' : 'Perangkat Daerah';
+}
+function syncUnitFieldLabel() {
+  const kategori = document.getElementById('formKategori')?.value || 'Instansi Pusat';
+  const label = document.getElementById('unitFieldLabel');
+  if (label) label.textContent = getUnitFieldLabel(kategori);
 }
 function escHtml(text) {
   return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -2031,7 +2039,7 @@ function mInstOnInput() {
   const drop = document.getElementById('mInstDrop');
   drop.innerHTML = mItems.length
     ? mItems.map((i,idx)=>`<div class="srch-opt" onmousedown="mInstSelect(${idx})">${hl(i.name,q)}<div class="sub">${i.sub}</div></div>`).join('')
-    : `<div class="srch-no">Tidak ditemukan — bisa isi manual</div>`;
+    : `<div class="srch-no">Tidak ditemukan - bisa isi manual</div>`;
   drop.classList.add('open'); mIdx=-1;
 }
 function mInstShow() { if(document.getElementById('mInstInput').value) mInstOnInput(); }
@@ -2039,6 +2047,7 @@ function mInstSelect(idx) {
   document.getElementById('mInstInput').value = mItems[idx].name;
   document.getElementById('formKategori').value = mItems[idx].kat;
   syncCustomSelect('formKategori');
+  syncUnitFieldLabel();
   document.getElementById('mInstDrop').classList.remove('open');
 }
 function mInstKeyNav(e) {
@@ -2062,7 +2071,7 @@ function updateHariPreview() {
   const tglSurat = document.getElementById('formTglSurat').value;
   const h = hitungHari(tgl, tglSurat);
   const el = document.getElementById('hariPreview');
-  if (h===null) { el.innerHTML='— isi tanggal disposisi'; return; }
+  if (h===null) { el.innerHTML='- isi tanggal disposisi'; return; }
   const col = h<=14?'#2e7d32':h<=30?'#f57f17':'#c62828';
   el.innerHTML = `<span style="color:${col};font-weight:700">${h} hari</span>&nbsp;dari disposisi${tglSurat ? ' sampai surat rekomendasi' : ' sampai hari ini'}`;
 }
@@ -2079,8 +2088,8 @@ function renderSummary() {
   document.getElementById('summaryCards').innerHTML=`
     <div class="card highlight"><div class="card-label">Total Instansi</div><div class="card-value">${t}</div><div class="card-sub">${pusat} pusat · ${pemda} daerah</div></div>
     <div class="card"><div class="card-label">Selesai</div><div class="card-value">${sel}</div><div class="card-sub">${t>0?Math.round(sel/t*100):0}% dari total</div></div>
-    <div class="card"><div class="card-label">Rata-rata Hari</div><div class="card-value">${hRata!==null?hRata:'—'}</div><div class="card-sub">hari sejak disposisi</div></div>
-    <div class="card"><div class="card-label">Unit Kerja/OPD</div><div class="card-value">${tO}</div><div class="card-sub">terdaftar</div></div>
+    <div class="card"><div class="card-label">Rata-rata Hari</div><div class="card-value">${hRata!==null?hRata:'-'}</div><div class="card-sub">hari sejak disposisi</div></div>
+    <div class="card"><div class="card-label">Unit Kerja/Perangkat Daerah</div><div class="card-value">${tO}</div><div class="card-sub">terdaftar</div></div>
     <div class="card"><div class="card-label">Total Usulan</div><div class="card-value">${tU}</div><div class="card-sub">arsiparis diusulkan</div></div>
     <div class="card"><div class="card-label">Total Rekomendasi</div><div class="card-value">${tR}</div><div class="card-sub">${tU>0?Math.round(tR/tU*100):0}% dari usulan</div></div>
   `;
@@ -2096,14 +2105,16 @@ function renderAnalytics() {
     const count = data.filter(d => d.kategori === item.key).length;
     return { ...item, count, pct: Math.round((count / total) * 100) };
   });
-  const statusRows = [
-    { label: 'Selesai', key: 'Selesai (BA & Rekomendasi)', color: '#34c759' },
-    { label: 'Verifikasi', key: 'Verifikasi', color: '#bf5af2' },
-    { label: 'Validasi', key: 'Validasi ke Instansi', color: '#32ade6' },
-    { label: 'TTE', key: 'Proses TTE', color: '#30d158' },
-  ].map(item => {
-    const count = data.filter(d => d.progres === item.key).length;
-    return { ...item, count, pct: Math.round((count / total) * 100) };
+  const progressPalette = ['#34c759', '#0a84ff', '#5e5ce6', '#32ade6', '#ff9f0a', '#ff375f', '#30d158', '#ffd60a', '#bf5af2'];
+  const statusRows = [...new Set(data.map(d => d.progres).filter(Boolean))].map((key, index) => {
+    const count = data.filter(d => d.progres === key).length;
+    return {
+      label: (PC[key] && PC[key].label) || key,
+      key,
+      count,
+      pct: Math.round((count / total) * 100),
+      color: progressPalette[index % progressPalette.length],
+    };
   });
   const selesai = data.filter(d => d.progres === 'Selesai (BA & Rekomendasi)').length;
   const selesaiPct = Math.round((selesai / total) * 100);
@@ -2122,23 +2133,39 @@ function renderAnalytics() {
       bobotPic,
     };
   }).sort((a,b) => b.count - a.count || b.bobotPic - a.bobotPic).slice(0, 6);
+  const picTotal = picRows.length || 1;
   const donutBg = `conic-gradient(${kategoriRows.map((item, index) => {
     const start = kategoriRows.slice(0, index).reduce((sum, row) => sum + row.pct, 0);
     const end = start + item.pct;
     return `${item.color} ${start}% ${end}%`;
   }).join(', ')}, rgba(214,224,240,0.34) 0 100%)`;
+  const progressDonutBg = statusRows.length
+    ? `conic-gradient(${statusRows.map((item, index) => {
+        const start = statusRows.slice(0, index).reduce((sum, row) => sum + row.pct, 0);
+        const end = start + item.pct;
+        return `${item.color} ${start}% ${end}%`;
+      }).join(', ')}, rgba(214,224,240,0.28) 0 100%)`
+    : 'conic-gradient(rgba(214,224,240,0.28) 0 100%)';
 
   document.getElementById('analyticsSection').innerHTML = `
     <div class="viz-card">
       <div class="viz-title">Persentase Progres</div>
-      <div class="viz-stack">
-        ${statusRows.map(row => `
-          <div class="viz-row">
-            <div class="viz-label">${row.label}</div>
-            <div class="viz-track"><div class="viz-bar" style="width:${row.pct}%; background:linear-gradient(90deg, ${row.color}, #0071e3)"></div></div>
-            <div class="viz-value">${row.count} (${row.pct}%)</div>
+      <div class="viz-donut-wrap">
+        <div class="viz-donut" style="background:${progressDonutBg}">
+          <div class="viz-donut-center">
+            <div class="viz-donut-number">${statusRows.length}</div>
+            <div class="viz-donut-sub">status aktif</div>
           </div>
-        `).join('')}
+        </div>
+        <div class="viz-legend">
+          ${statusRows.map(row => `
+            <div class="viz-legend-item">
+              <div class="viz-legend-left"><span class="viz-dot" style="background:${row.color}"></span>${row.label}</div>
+              <span>${row.count} (${row.pct}%)</span>
+            </div>
+          `).join('')}
+          ${statusRows.length ? '' : `<div class="mini-text">Belum ada data progres</div>`}
+        </div>
       </div>
     </div>
     <div class="viz-card">
@@ -2158,6 +2185,25 @@ function renderAnalytics() {
             </div>
           `).join('')}
         </div>
+      </div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-title">Distribusi PIC</div>
+      <div class="viz-pic-grid">
+        ${picRows.map(row => `
+          <div class="viz-pic-item">
+            <div class="viz-pic-name">${row.name}</div>
+            <div class="viz-track"><div class="viz-bar" style="width:${row.pct}%; background:linear-gradient(90deg, #5e5ce6, #0a84ff)"></div></div>
+            <div class="viz-value">${row.count} (${row.pct}%)</div>
+          </div>
+          <div class="viz-row" style="grid-template-columns:minmax(120px,1fr) 1.2fr auto;">
+            <div class="viz-label">Selesai PIC</div>
+            <div class="viz-track"><div class="viz-bar" style="width:${row.selesaiPct}%; background:linear-gradient(90deg, #34c759, #0a84ff)"></div></div>
+            <div class="viz-value">${row.selesaiPct}%</div>
+          </div>
+          <div class="mini-text" style="margin-top:-4px">Total usulan PIC: <strong>${row.bobotPic}</strong></div>
+        `).join('')}
+        ${picRows.length ? '' : `<div class="mini-text">Belum ada data PIC</div>`}
       </div>
     </div>
     <div class="viz-card">
@@ -2183,24 +2229,6 @@ function renderAnalytics() {
           <div class="viz-stat-value">${Math.max(data.length - selesai, 0)}</div>
           <div class="viz-stat-sub">masih perlu tindak lanjut</div>
         </div>
-      </div>
-    </div>
-    <div class="viz-card">
-      <div class="viz-title">Distribusi PIC</div>
-      <div class="viz-pic-grid">
-        ${picRows.map(row => `
-          <div class="viz-pic-item">
-            <div class="viz-pic-name">${row.name}</div>
-            <div class="viz-track"><div class="viz-bar" style="width:${row.pct}%; background:linear-gradient(90deg, #5e5ce6, #0a84ff)"></div></div>
-            <div class="viz-value">${row.count} (${row.pct}%)</div>
-          </div>
-          <div class="viz-row" style="grid-template-columns:minmax(120px,1fr) 1.2fr auto;">
-            <div class="viz-label">Selesai PIC</div>
-            <div class="viz-track"><div class="viz-bar" style="width:${row.selesaiPct}%; background:linear-gradient(90deg, #34c759, #0a84ff)"></div></div>
-            <div class="viz-value">${row.selesaiPct}%</div>
-          </div>
-          <div class="mini-text" style="margin-top:-4px">Total usulan PIC: <strong>${row.bobotPic}</strong></div>
-        `).join('')}
       </div>
     </div>
   `;
@@ -2273,9 +2301,9 @@ function renderTable(){
   tbody.innerHTML=filtered.map(row=>{
     const ri=data.indexOf(row),pc=PC[row.progres]||{cls:'',label:row.progres};
     const h=hitungHari(row.tanggalDisposisi, row.tanggalSuratRekomendasi);
-    const hHtml=h!==null?`<span class="hari-badge ${hariCls(h)}">${h}h</span>`:`<span class="hari-badge hari-none">—</span>`;
-    const suratNomor = row.nomorSuratRekomendasi ? `<div class="surat-number">${escHtml(row.nomorSuratRekomendasi)}</div>` : `<span class="muted-cell">â€”</span>`;
-    const dokumenHtml = row.linkDokumenSuratRekomendasi ? `<a class="link-doc" href="${escHtml(row.linkDokumenSuratRekomendasi)}" target="_blank" rel="noopener noreferrer">Buka dokumen</a>` : `<span class="muted-cell">â€”</span>`;
+    const hHtml=h!==null?`<span class="hari-badge ${hariCls(h)}">${h}h</span>`:`<span class="hari-badge hari-none">-</span>`;
+    const suratNomor = row.nomorSuratRekomendasi ? `<div class="surat-number">${escHtml(row.nomorSuratRekomendasi)}</div>` : `<span class="muted-cell">-</span>`;
+    const dokumenHtml = row.linkDokumenSuratRekomendasi ? `<a class="link-doc" href="${escHtml(row.linkDokumenSuratRekomendasi)}" target="_blank" rel="noopener noreferrer">Buka dokumen</a>` : `<span class="muted-cell">-</span>`;
     return`<tr>
       <td>
         <div class="inst-meta">
@@ -2298,7 +2326,7 @@ function renderTable(){
       </td>
       <td>
         <div class="metric-grid">
-          <div class="metric-chip"><span class="k">OPD</span><span class="v">${row.jumlahOPD}</span></div>
+          <div class="metric-chip"><span class="k">${row.kategori === 'Instansi Pusat' ? 'Unit Kerja' : 'Perangkat Daerah'}</span><span class="v">${row.jumlahOPD}</span></div>
           <div class="metric-chip"><span class="k">Usulan</span><span class="v">${row.jumlahUsulan}</span></div>
           <div class="metric-chip"><span class="k">Rekom.</span><span class="v">${row.jumlahRekomendasi}</span></div>
         </div>
@@ -2318,13 +2346,12 @@ function renderTable(){
         </div>
       </td>
       <td><div class="action-btns">
-        <button class="btn-icon" onclick="editData(${ri})" title="Edit">✏️</button>
-        <button class="btn-icon danger" onclick="deleteData(${ri})" title="Hapus">🗑</button>
+        <button class="btn-icon" onclick="editData(${ri})" title="Edit">&#9998;</button>
+        <button class="btn-icon danger" onclick="deleteData(${ri})" title="Hapus">&#128465;</button>
       </div></td>
     </tr>`;
   }).join('');
 }
-
 // ============ CRUD ============
 function openModal(){
   if (!guardAdminAction()) return;
@@ -2337,8 +2364,9 @@ function openModal(){
   syncCustomSelect('formKategori');
   syncCustomSelect('formPIC');
   syncCustomSelect('formProgres');
+  syncUnitFieldLabel();
   document.getElementById('formTgl').value='';
-  document.getElementById('hariPreview').innerHTML='— isi tanggal disposisi';
+  document.getElementById('hariPreview').innerHTML='- isi tanggal disposisi';
   document.getElementById('formOPD').value=0;
   document.getElementById('formUsulan').value=0;
   document.getElementById('formRek').value=0;
@@ -2360,6 +2388,7 @@ function editData(i){
   syncCustomSelect('formKategori');
   syncCustomSelect('formPIC');
   syncCustomSelect('formProgres');
+  syncUnitFieldLabel();
   document.getElementById('formTgl').value=r.tanggalDisposisi||'';
   document.getElementById('formOPD').value=r.jumlahOPD;
   document.getElementById('formUsulan').value=r.jumlahUsulan;
@@ -2419,7 +2448,7 @@ function closeModalOutside(e){return;}
 
 // ============ EXPORT ============
 function exportCSV(){
-  const h=['Instansi','Kategori','PIC','Progres','Tgl Disposisi','Hari Progres','Unit Kerja/OPD','Jumlah Usulan','Jumlah Rekomendasi','Nomor Surat Rekomendasi','Tanggal Surat Rekomendasi','Link Dokumen Surat Rekomendasi','Update di Rekap'];
+  const h=['Instansi','Kategori','PIC','Progres','Tgl Disposisi','Hari Progres','Unit Kerja/Perangkat Daerah','Jumlah Usulan','Jumlah Rekomendasi','Nomor Surat Rekomendasi','Tanggal Surat Rekomendasi','Link Dokumen Surat Rekomendasi','Update di Rekap'];
   const rows=filtered.map(d=>[d.instansi,d.kategori,d.pic,d.progres,d.tanggalDisposisi||'',hitungHari(d.tanggalDisposisi, d.tanggalSuratRekomendasi)??'',d.jumlahOPD,d.jumlahUsulan,d.jumlahRekomendasi,d.nomorSuratRekomendasi||'',d.tanggalSuratRekomendasi||'',d.linkDokumenSuratRekomendasi||'',d.updateDiRekap||'']);
   const csv=[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
   const a=document.createElement('a');
@@ -2432,6 +2461,8 @@ function exportCSV(){
 async function boot() {
   document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   initCustomSelects();
+  document.getElementById('formKategori').addEventListener('change', syncUnitFieldLabel);
+  syncUnitFieldLabel();
   initSupabase();
   await restoreAdminSession();
   await loadDataFromSupabase();
@@ -2446,3 +2477,5 @@ boot();
 </script>
 </body>
 </html>
+
+
