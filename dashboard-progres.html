@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Progres Verifikasi Kebutuhan Jabatan Fungsional Arsiparis</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  .filter-section {
+    position: relative !important;
+    z-index: 420 !important;
+    overflow: visible !important;
+  }
+  .status-pills,
+  .table-section {
+    position: relative !important;
+    z-index: 20 !important;
+  }
+  .filter-grid,
+  .filter-group,
+  .search-wrap,
+  .select-wrapper {
+    overflow: visible !important;
+  }
+  .search-wrap,
+  .select-wrapper.open,
+  .search-wrap:focus-within {
+    z-index: 460 !important;
+  }
+  .srch-drop,
+  .custom-select-menu {
+    z-index: 9999 !important;
+  }
+
+  .filter-section { z-index: 40; overflow: visible; }
+  .status-pills, .table-section { z-index: 10; }
+  .search-wrap,
+  .select-wrapper { position: relative; }
+  .search-wrap:focus-within,
+  .select-wrapper.open { z-index: 260; }
+
+  thead th {
+    background:
+      linear-gradient(180deg, rgba(188,201,224,0.92), rgba(163,178,204,0.86)),
+      linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0));
+    color: rgba(33,46,70,0.96);
+    border-bottom: 1px solid rgba(93,112,148,0.2);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -1px 0 rgba(93,112,148,0.16);
+  }
+  thead th:hover,
+  thead th.sorted {
+    color: #0b57c4;
+    background:
+      linear-gradient(180deg, rgba(201,214,236,0.98), rgba(177,193,220,0.94)),
+      linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+  }
+
+  .custom-native-select {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .select-wrapper::before,
+  .select-wrapper::after { display: none !important; }
+  .custom-select {
+    position: relative;
+  }
+  .custom-select-trigger {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 52px 12px 16px;
+    border: 1px solid rgba(255,255,255,0.88);
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.97), rgba(240,246,255,0.78)),
+      linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0));
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      0 10px 26px rgba(83,104,140,0.1),
+      0 1px 2px rgba(15,23,42,0.05);
+    color: var(--apple-text);
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  }
+  .custom-select-trigger:hover {
+    border-color: rgba(194,214,242,0.96);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,1), rgba(237,244,255,0.84)),
+      linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0));
+  }
+  .select-wrapper.open .custom-select-trigger,
+  .custom-select-trigger:focus-visible {
+    outline: none;
+    border-color: rgba(0,113,227,0.54);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      0 0 0 5px rgba(0,113,227,0.12),
+      0 16px 36px rgba(0,113,227,0.14);
+  }
+  .custom-select-trigger::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 32px;
+    height: calc(100% - 16px);
+    border-radius: 11px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(232,239,250,0.82));
+    border: 1px solid rgba(255,255,255,0.84);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.96);
+  }
+  .custom-select-trigger::after {
+    content: "";
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 1.8px solid rgba(47,61,90,0.9);
+    border-bottom: 1.8px solid rgba(47,61,90,0.9);
+    transform: translateY(-65%) rotate(45deg);
+    transition: transform 0.24s ease;
+  }
+  .select-wrapper.open .custom-select-trigger::after {
+    transform: translateY(-30%) rotate(225deg);
+  }
+  .custom-select-value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 6px;
+  }
+  .custom-select-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    padding: 8px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.88);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.97), rgba(244,248,255,0.9)),
+      linear-gradient(135deg, rgba(255,255,255,0.34), rgba(255,255,255,0));
+    box-shadow:
+      0 28px 60px rgba(31,45,75,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.96);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 320;
+  }
+  .select-wrapper.open .custom-select-menu {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .custom-select-option {
+    width: 100%;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--apple-text);
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+  }
+  .custom-select-option:hover,
+  .custom-select-option.is-active {
+    background:
+      linear-gradient(180deg, rgba(0,113,227,0.14), rgba(0,113,227,0.08)),
+      rgba(255,255,255,0.42);
+    color: #0b57c4;
+  }
+  .custom-select-option.is-selected {
+    background: linear-gradient(180deg, rgba(15,123,245,0.92), rgba(0,113,227,0.9));
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
+  }
+
+  .srch-drop {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+    visibility: hidden;
+    pointer-events: none;
+    display: block;
+    z-index: 340;
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+  }
+  .srch-drop.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    pointer-events: auto;
+  }
+</style>
+<style>
+  :root {
+    --green-dark: #1a3a2a;
+    --green-mid: #2d5a3d;
+    --green-accent: #3d7a52;
+    --green-ultra: #f2faf5;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --text-primary: #1a2e22;
+    --text-secondary: #4a6354;
+    --text-muted: #7a9885;
+    --border: #c8dfd0;
+    --white: #ffffff;
+    --shadow: 0 2px 12px rgba(26,58,42,0.10);
+    --shadow-lg: 0 8px 32px rgba(26,58,42,0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--green-ultra); color: var(--text-primary); min-height: 100vh; }
+
+  .header {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+    padding: 20px 32px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--shadow-lg); position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-icon { width: 44px; height: 44px; background: var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .header-title { color: var(--white); font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .header-sub { color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 2px; }
+  .header-badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: var(--gold-light); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; }
+
+  .summary-section { padding: 24px 32px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .card { background: var(--white); border-radius: 16px; padding: 18px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: transform 0.15s, box-shadow 0.15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .card-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .card-value { font-size: 28px; font-weight: 700; color: var(--green-dark); line-height: 1; }
+  .card-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .card.highlight { background: var(--green-dark); border-color: var(--green-dark); }
+  .card.highlight .card-label { color: rgba(255,255,255,0.55); }
+  .card.highlight .card-value { color: var(--gold-light); }
+  .card.highlight .card-sub { color: rgba(255,255,255,0.4); }
+
+  .filter-section { padding: 20px 24px; background: var(--white); margin: 20px 32px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .filter-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+  .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; align-items: end; }
+  .filter-group label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
+  .filter-group select {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: inherit; font-size: 13px; color: var(--text-primary);
+    background: var(--green-ultra); outline: none; transition: border-color 0.15s;
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+  }
+  .filter-group select:focus { border-color: var(--green-accent); background: var(--white); }
+  .select-wrapper { position: relative; }
+  .select-wrapper::after { content: '▾'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 11px; pointer-events: none; }
+
+  /* LIVE SEARCH */
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    width: 100%; padding: 9px 28px 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: inherit; font-size: 13px; color: var(--text-primary);
+    background: var(--green-ultra); outline: none; transition: border-color 0.15s;
+  }
+  .search-wrap input:focus { border-color: var(--green-accent); background: var(--white); }
+  .search-wrap .x-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 14px; display: none; }
+  .search-wrap .x-btn.on { display: block; }
+  .srch-drop {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow-lg); max-height: 220px; overflow-y: auto; z-index: 300; display: none;
+  }
+  .srch-drop.open { display: block; }
+  .srch-opt { padding: 8px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--green-ultra); transition: background 0.1s; }
+  .srch-opt:last-child { border-bottom: none; }
+  .srch-opt:hover, .srch-opt.hl { background: var(--green-ultra); }
+  .srch-opt .sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .srch-no { padding: 12px; font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  .btn-reset { width: 100%; padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--white); color: var(--text-secondary); font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+  .btn-reset:hover { border-color: var(--green-accent); color: var(--green-accent); }
+
+  .status-pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 32px 20px; }
+  .pill { padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .pill.active { background: var(--green-dark); color: var(--white); border-color: var(--green-dark); }
+  .pill:not(.active) { background: var(--white); color: var(--text-secondary); border-color: var(--border); }
+  .pill:not(.active):hover { border-color: var(--green-accent); color: var(--green-accent); }
+
+  .table-section { padding: 0 32px 32px; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .table-count { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+  .table-count span { font-weight: 700; color: var(--green-dark); }
+  .table-actions { display: flex; gap: 8px; }
+  .btn-add { padding: 9px 18px; background: var(--green-dark); color: var(--white); border: none; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .btn-add:hover { background: var(--green-mid); }
+  .btn-export { padding: 9px 18px; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-export:hover { border-color: var(--green-accent); color: var(--green-accent); }
+
+  .table-wrapper { background: var(--white); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 1450px; }
+  thead tr { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); }
+  thead th { padding: 13px 14px; text-align: left; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.15s; }
+  thead th:hover, thead th.sorted { color: var(--gold-light); }
+  tbody tr { border-bottom: 1px solid var(--green-ultra); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--green-ultra); }
+  tbody td { padding: 12px 14px; font-size: 13px; color: var(--text-primary); vertical-align: middle; }
+  .inst-name { font-weight: 600; font-size: 13px; }
+  .pic-nm { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .num-cell { text-align: right; font-weight: 600; font-size: 14px; }
+  .link-doc { color: var(--green-accent); text-decoration: none; font-weight: 600; }
+  .link-doc:hover { text-decoration: underline; }
+  .muted-cell { font-size: 12px; color: var(--text-muted); }
+
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .s-diterima { background: #e8f4fd; color: #1a6fa8; } .s-diterima .status-dot { background: #2196f3; }
+  .s-koordinasi { background: #fff3e0; color: #b36000; } .s-koordinasi .status-dot { background: #ff9800; }
+  .s-verifikasi { background: #f3e5f5; color: #7b1fa2; } .s-verifikasi .status-dot { background: #9c27b0; }
+  .s-verifikasi-utama { background: #ede7f6; color: #4527a0; } .s-verifikasi-utama .status-dot { background: #673ab7; }
+  .s-validasi { background: #e8eaf6; color: #283593; } .s-validasi .status-dot { background: #3f51b5; }
+  .s-tte { background: #e0f2f1; color: #00695c; } .s-tte .status-dot { background: #009688; }
+  .s-selesai { background: #e8f5e9; color: #1b5e20; } .s-selesai .status-dot { background: #4caf50; }
+  .s-perbaikan { background: #fff8e1; color: #f57f17; } .s-perbaikan .status-dot { background: #ffc107; }
+  .s-surat { background: #fce4ec; color: #880e4f; } .s-surat .status-dot { background: #e91e63; }
+
+  .hari-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .hari-ok { background: #e8f5e9; color: #2e7d32; }
+  .hari-warn { background: #fff8e1; color: #f57f17; }
+  .hari-danger { background: #ffebee; color: #c62828; }
+  .hari-none { background: var(--green-ultra); color: var(--text-muted); font-weight: 500; }
+
+  .cat-tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cat-pusat { background: #e8f5ee; color: var(--green-mid); }
+  .cat-provinsi { background: #e8eaf6; color: #3949ab; }
+  .cat-kabkota { background: #fff8e1; color: #f57f17; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .btn-icon { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; transition: all 0.15s; color: var(--text-muted); }
+  .btn-icon:hover { border-color: var(--green-accent); color: var(--green-accent); background: var(--green-ultra); }
+  .btn-icon.danger:hover { border-color: #e53935; color: #e53935; background: #ffebee; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,58,42,0.55); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--white); border-radius: 20px; padding: 28px; width: 90%; max-width: 580px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: modalIn 0.2s ease; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--green-dark); }
+  .modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--green-ultra); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .modal-close:hover { background: #ffebee; color: #e53935; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1/-1; }
+  .form-group label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-group input, .form-group select { padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 13px; outline: none; background: var(--green-ultra); color: var(--text-primary); transition: border-color 0.15s; appearance: none; -webkit-appearance: none; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--green-accent); background: var(--white); }
+  .form-group input[type="date"] { cursor: pointer; }
+  .hari-preview { padding: 9px 12px; background: var(--green-ultra); border-radius: 10px; font-size: 13px; color: var(--text-muted); border: 1.5px solid var(--border); min-height: 40px; display: flex; align-items: center; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+  .btn-cancel { padding: 10px 20px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--white); color: var(--text-secondary); font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+  .btn-cancel:hover { border-color: var(--green-accent); }
+  .btn-save { padding: 10px 24px; background: var(--green-dark); color: var(--white); border: none; border-radius: 10px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+  .btn-save:hover { background: var(--green-mid); }
+
+  @media (max-width: 768px) {
+    .summary-section, .table-section, .status-pills { padding-left: 16px; padding-right: 16px; }
+    .filter-section { margin: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .header { padding: 16px; }
+    .header-badge { display: none; }
+  }
+</style>
+<style>
+  :root {
+    --apple-bg-top: #eef5ff;
+    --apple-bg-mid: #e8eefb;
+    --apple-bg-bottom: #f8fbff;
+    --apple-panel-strong: rgba(255,255,255,0.72);
+    --apple-panel-soft: rgba(255,255,255,0.44);
+    --apple-stroke: rgba(255,255,255,0.64);
+    --apple-text: #162033;
+    --apple-subtext: #5f6b85;
+    --apple-muted: #8b95ab;
+    --apple-blue: #0071e3;
+    --apple-blue-soft: rgba(0,113,227,0.14);
+    --apple-danger: #ff453a;
+    --apple-shadow-sm: 0 10px 30px rgba(46,61,90,0.08);
+    --apple-shadow-lg: 0 24px 70px rgba(29,45,74,0.16);
+    --apple-blur: blur(24px);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--apple-text);
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255,255,255,0.95), rgba(255,255,255,0) 30%),
+      radial-gradient(circle at 100% 10%, rgba(64,156,255,0.16), rgba(64,156,255,0) 32%),
+      radial-gradient(circle at 20% 100%, rgba(148,163,184,0.16), rgba(148,163,184,0) 28%),
+      linear-gradient(180deg, var(--apple-bg-top) 0%, var(--apple-bg-mid) 50%, var(--apple-bg-bottom) 100%);
+    background-attachment: fixed;
+    position: relative;
+    min-height: 100vh;
+  }
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    border-radius: 999px;
+    filter: blur(72px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 320px;
+    height: 320px;
+    top: -80px;
+    right: -36px;
+    background: rgba(118,194,255,0.26);
+  }
+  body::after {
+    width: 280px;
+    height: 280px;
+    left: -60px;
+    bottom: -60px;
+    background: rgba(255,255,255,0.46);
+  }
+
+  .header,
+  .summary-section,
+  .filter-section,
+  .status-pills,
+  .table-section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    position: sticky;
+    top: 18px;
+    z-index: 100;
+    margin: 18px 24px 0;
+    padding: 16px 20px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.58), rgba(255,255,255,0.3));
+    border: 1px solid var(--apple-stroke);
+    box-shadow: var(--apple-shadow-lg);
+    backdrop-filter: var(--apple-blur);
+    -webkit-backdrop-filter: var(--apple-blur);
+  }
+  .header-left { min-width: 0; }
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.48));
+    border: 1px solid rgba(255,255,255,0.74);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.84), 0 8px 18px rgba(80,100,140,0.12);
+  }
+  .header-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+  }
+  .header-title {
+    color: var(--apple-text);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .header-sub {
+    color: var(--apple-subtext);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.52);
+    border: 1px solid rgba(255,255,255,0.76);
+    color: var(--apple-subtext);
+    padding: 9px 14px;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .admin-chip {
+    min-height: 40px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.76);
+    background: rgba(255,255,255,0.48);
+    color: var(--apple-subtext);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+  }
+  .admin-chip.primary {
+    background: linear-gradient(180deg, #1093ff, #0071e3);
+    border-color: rgba(255,255,255,0.3);
+    color: #fff;
+    box-shadow: 0 14px 28px rgba(0,113,227,0.2), inset 0 1px 0 rgba(255,255,255,0.26);
+  }
+  .admin-chip.warn {
+    color: #8a5b00;
+    background: rgba(255,214,10,0.16);
+  }
+
+  .summary-section {
+    padding: 24px 32px 0;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+  }
+  .card,
+  .filter-section,
+  .table-wrapper,
+  .modal {
+    background: linear-gradient(180deg, var(--apple-panel-strong), var(--apple-panel-soft));
+    border: 1px solid var(--apple-stroke);
+    box-shadow: var(--apple-shadow-lg), inset 0 1px 0 rgba(255,255,255,0.82);
+    backdrop-filter: var(--apple-blur);
+    -webkit-backdrop-filter: var(--apple-blur);
+  }
+  .card {
+    border-radius: 22px;
+    padding: 20px 20px 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--apple-shadow-lg), inset 0 1px 0 rgba(255,255,255,0.86);
+  }
+  .card-label {
+    color: var(--apple-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+  .card-value {
+    color: var(--apple-text);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .card-sub {
+    color: var(--apple-subtext);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  .card.highlight {
+    background: linear-gradient(145deg, rgba(21,101,216,0.92), rgba(83,173,255,0.72));
+    border-color: rgba(255,255,255,0.34);
+  }
+  .card.highlight .card-label,
+  .card.highlight .card-sub,
+  .card.highlight .card-value {
+    color: #fff;
+  }
+
+  .filter-section {
+    margin: 22px 32px;
+    padding: 22px 24px;
+    border-radius: 28px;
+  }
+  .filter-title {
+    color: var(--apple-muted);
+    letter-spacing: 0.14em;
+    margin-bottom: 16px;
+  }
+  .filter-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+  }
+  .filter-group label,
+  .form-group label {
+    color: var(--apple-subtext);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .filter-group select,
+  .search-wrap input,
+  .form-group input,
+  .form-group select {
+    min-height: 46px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.74);
+    background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(245,248,255,0.58));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04);
+    color: var(--apple-text);
+  }
+  .filter-group select:focus,
+  .search-wrap input:focus,
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: rgba(0,113,227,0.46);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.94), 0 0 0 4px rgba(0,113,227,0.14);
+    background: rgba(255,255,255,0.96);
+  }
+  .select-wrapper::after {
+    right: 14px;
+    color: var(--apple-muted);
+  }
+  .search-wrap .x-btn {
+    width: 22px;
+    height: 22px;
+    right: 10px;
+    background: rgba(15,23,42,0.06);
+    border-radius: 999px;
+    font-size: 12px;
+  }
+  .srch-drop {
+    top: calc(100% + 8px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.74);
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(249,251,255,0.78));
+    box-shadow: var(--apple-shadow-lg);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+  }
+  .srch-opt {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(120,138,173,0.08);
+  }
+  .srch-opt:hover,
+  .srch-opt.hl {
+    background: rgba(0,113,227,0.08);
+  }
+  .srch-opt .sub,
+  .srch-no {
+    color: var(--apple-muted);
+  }
+
+  .btn-reset,
+  .btn-export,
+  .btn-cancel {
+    min-height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.76);
+    background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(244,247,255,0.56));
+    color: var(--apple-subtext);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04);
+  }
+  .btn-add,
+  .btn-save {
+    min-height: 46px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(180deg, #1093ff, #0071e3);
+    box-shadow: 0 16px 30px rgba(0,113,227,0.22), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .btn-reset:hover,
+  .btn-export:hover,
+  .btn-cancel:hover,
+  .btn-add:hover,
+  .btn-save:hover,
+  .btn-icon:hover {
+    transform: translateY(-1px);
+  }
+
+  .status-pills {
+    gap: 10px;
+    padding: 0 32px 22px;
+  }
+  .pill {
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.76);
+    background: rgba(255,255,255,0.46);
+    color: var(--apple-subtext);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .pill.active {
+    background: linear-gradient(180deg, rgba(16,147,255,0.92), rgba(0,113,227,0.88));
+    border-color: rgba(255,255,255,0.34);
+    box-shadow: 0 16px 28px rgba(0,113,227,0.2), inset 0 1px 0 rgba(255,255,255,0.28);
+  }
+
+  .table-section { padding: 0 32px 36px; }
+  .table-header {
+    margin-bottom: 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .table-count {
+    color: var(--apple-subtext);
+    font-size: 14px;
+  }
+  .table-count span { color: var(--apple-text); }
+  .table-actions { gap: 10px; flex-wrap: wrap; }
+  .table-wrapper {
+    border-radius: 26px;
+    overflow: hidden;
+  }
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(242,246,255,0.46));
+    color: var(--apple-muted);
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    border-bottom: 1px solid rgba(124,141,181,0.12);
+  }
+  thead th:hover,
+  thead th.sorted {
+    color: var(--apple-blue);
+  }
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid rgba(124,141,181,0.08);
+  }
+  tbody tr:hover {
+    background: rgba(255,255,255,0.34);
+  }
+  tbody td {
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.14);
+    color: var(--apple-text);
+  }
+  .inst-name {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .pic-nm,
+  .muted-cell {
+    color: var(--apple-subtext);
+  }
+  .num-cell { font-weight: 700; }
+  .link-doc {
+    color: var(--apple-blue);
+    font-weight: 700;
+  }
+
+  .status-badge,
+  .hari-badge,
+  .cat-tag {
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+  }
+  .s-diterima { background: rgba(10,132,255,0.12); color: #0c69cf; }
+  .s-koordinasi { background: rgba(255,159,10,0.14); color: #b36a00; }
+  .s-verifikasi { background: rgba(191,90,242,0.14); color: #8b46c9; }
+  .s-verifikasi-utama { background: rgba(94,92,230,0.14); color: #4f4dd3; }
+  .s-validasi { background: rgba(50,173,230,0.14); color: #156d9a; }
+  .s-tte { background: rgba(48,209,88,0.14); color: #128538; }
+  .s-selesai { background: rgba(52,199,89,0.14); color: #1e8a3d; }
+  .s-perbaikan { background: rgba(255,214,10,0.16); color: #9a7a00; }
+  .s-surat { background: rgba(255,55,95,0.14); color: #bb2948; }
+  .s-diterima .status-dot { background: #0a84ff; }
+  .s-koordinasi .status-dot { background: #ff9f0a; }
+  .s-verifikasi .status-dot { background: #bf5af2; }
+  .s-verifikasi-utama .status-dot { background: #5e5ce6; }
+  .s-validasi .status-dot { background: #32ade6; }
+  .s-tte .status-dot { background: #30d158; }
+  .s-selesai .status-dot { background: #34c759; }
+  .s-perbaikan .status-dot { background: #ffd60a; }
+  .s-surat .status-dot { background: #ff375f; }
+  .hari-ok { background: rgba(52,199,89,0.14); color: #1e8a3d; }
+  .hari-warn { background: rgba(255,159,10,0.14); color: #b36a00; }
+  .hari-danger { background: rgba(255,69,58,0.14); color: #b12c24; }
+  .hari-none { background: rgba(141,154,178,0.12); color: var(--apple-muted); }
+  .cat-pusat { background: rgba(10,132,255,0.1); color: #0c69cf; }
+  .cat-provinsi { background: rgba(94,92,230,0.12); color: #4f4dd3; }
+  .cat-kabkota { background: rgba(255,159,10,0.12); color: #b36a00; }
+
+  .btn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.76);
+    background: rgba(255,255,255,0.52);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .btn-icon:hover {
+    color: var(--apple-blue);
+    background: rgba(255,255,255,0.74);
+  }
+  .btn-icon.danger:hover {
+    color: var(--apple-danger);
+    background: rgba(255,69,58,0.08);
+  }
+
+  .empty-state {
+    padding: 76px 24px;
+    color: var(--apple-muted);
+  }
+
+  .modal-overlay {
+    background: rgba(12,20,36,0.22);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 20px;
+  }
+  .modal {
+    max-width: 700px;
+    width: 100%;
+    border-radius: 30px;
+    padding: 28px;
+  }
+  .modal-title {
+    color: var(--apple-text);
+    font-size: 21px;
+    letter-spacing: -0.02em;
+  }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.72);
+    background: rgba(255,255,255,0.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.84);
+  }
+  .modal-close:hover {
+    background: rgba(255,255,255,0.8);
+    color: var(--apple-danger);
+  }
+  .form-grid {
+    gap: 15px;
+  }
+  .hari-preview {
+    min-height: 46px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(245,248,255,0.56));
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+    color: var(--apple-muted);
+  }
+  .modal-footer {
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .admin-note {
+    font-size: 12px;
+    color: var(--apple-subtext);
+    line-height: 1.5;
+  }
+  .btn-add:disabled,
+  .btn-save:disabled,
+  .btn-icon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  @media (max-width: 768px) {
+    .header {
+      margin: 14px 14px 0;
+      padding: 14px 16px;
+      top: 10px;
+    }
+    .header-title { font-size: 17px; }
+    .header-badge { display: none; }
+    .header-actions { width: 100%; justify-content: flex-start; }
+    .summary-section,
+    .status-pills,
+    .table-section {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .filter-section {
+      margin: 16px;
+      padding: 18px;
+    }
+    .table-wrapper { border-radius: 22px; }
+  }
+</style>
+<style>
+  .table-wrapper {
+    border: 1px solid rgba(255,255,255,0.82);
+    box-shadow:
+      0 24px 70px rgba(29,45,74,0.16),
+      inset 0 1px 0 rgba(255,255,255,0.86),
+      inset 0 -1px 0 rgba(120,138,173,0.06);
+  }
+
+  thead th {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240,246,255,0.72)),
+      linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0));
+    color: rgba(41,55,82,0.9);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.95),
+      inset 0 -1px 0 rgba(124,141,181,0.12);
+  }
+  thead th:hover,
+  thead th.sorted {
+    color: #005fcc;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(233,243,255,0.86)),
+      linear-gradient(90deg, rgba(0,113,227,0.05), rgba(255,255,255,0));
+  }
+
+  tbody td {
+    background: rgba(255,255,255,0.2);
+  }
+  tbody tr:hover td {
+    background: rgba(255,255,255,0.42);
+  }
+
+  .filter-group .select-wrapper,
+  .form-group .select-wrapper {
+    position: relative;
+  }
+  .filter-group .select-wrapper::before,
+  .form-group .select-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    right: 10px;
+    width: 30px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(236,242,252,0.7));
+    border: 1px solid rgba(255,255,255,0.76);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
+    pointer-events: none;
+  }
+  .filter-group .select-wrapper::after,
+  .form-group .select-wrapper::after {
+    right: 20px;
+    color: rgba(47,61,90,0.82);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .filter-group select,
+  .form-group select,
+  .search-wrap input {
+    border-color: rgba(255,255,255,0.86);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,246,255,0.72)),
+      linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.98),
+      0 6px 18px rgba(83,104,140,0.08),
+      0 1px 2px rgba(15,23,42,0.04);
+  }
+  .filter-group select:hover,
+  .form-group select:hover,
+  .search-wrap input:hover {
+    border-color: rgba(190,211,242,0.9);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(237,244,255,0.82)),
+      linear-gradient(135deg, rgba(255,255,255,0.44), rgba(255,255,255,0));
+  }
+  .filter-group select:focus,
+  .form-group select:focus,
+  .search-wrap input:focus {
+    border-color: rgba(0,113,227,0.52);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.98),
+      0 0 0 5px rgba(0,113,227,0.12),
+      0 10px 28px rgba(0,113,227,0.12);
+  }
+
+  .srch-drop {
+    border: 1px solid rgba(255,255,255,0.84);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,249,255,0.88)),
+      linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+    box-shadow:
+      0 28px 54px rgba(31,45,75,0.18),
+      inset 0 1px 0 rgba(255,255,255,0.94);
+  }
+  .srch-opt {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(120,138,173,0.07);
+  }
+  .srch-opt:hover,
+  .srch-opt.hl {
+    background:
+      linear-gradient(180deg, rgba(0,113,227,0.12), rgba(0,113,227,0.06)),
+      rgba(255,255,255,0.45);
+  }
+  .srch-opt .sub {
+    color: rgba(88,103,132,0.8);
+  }
+  .srch-no {
+    color: rgba(88,103,132,0.8);
+    padding: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon"><img src="./logo-anri.png" alt="Logo ANRI"></div>
+    <div>
+      <div class="header-title">Dashboard Progres Verifikasi Kebutuhan Jabatan Fungsional Arsiparis</div>
+      <div class="header-sub">Direktorat SDM Kearsipan & Sertifikasi · ANRI</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="admin-chip warn" id="adminStatusBtn" type="button" onclick="openAdminLogin()">Mode baca</button>
+    <button class="admin-chip primary" id="adminAccessBtn" type="button" onclick="openAdminLogin()">Login Admin</button>
+    <div class="header-badge" id="lastUpdate">—</div>
+  </div>
+</div>
+
+<div class="summary-section" id="summaryCards"></div>
+
+<div class="modal-overlay" id="adminModalOverlay" onclick="closeAdminModalOutside(event)">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">Login Admin</div>
+      <button class="modal-close" onclick="closeAdminModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Username</label>
+        <input type="text" id="adminUsername" placeholder="Admin" autocomplete="username">
+      </div>
+      <div class="form-group full">
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Masukkan password admin" autocomplete="current-password">
+      </div>
+      <div class="form-group full">
+        <div class="admin-note" id="adminHelpText">Login admin diperlukan untuk tambah, edit, dan hapus data. Untuk versi live GitHub Pages, login ini divalidasi lewat Supabase Auth.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeAdminModal()">Batal</button>
+      <button class="btn-save" type="button" onclick="submitAdminLogin()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <div class="filter-title">🔍 Filter Data</div>
+  <div class="filter-grid">
+    <div class="filter-group">
+      <label>Kategori Instansi</label>
+      <div class="select-wrapper">
+        <select id="filterKategori" onchange="applyFilters()">
+          <option value="">Semua Kategori</option>
+          <option value="Instansi Pusat">Instansi Pusat</option>
+          <option value="Pemerintah Daerah Provinsi">Pemerintah Daerah Provinsi</option>
+          <option value="Pemerintah Daerah Kab/Kota">Pemerintah Daerah Kab/Kota</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Cari Instansi</label>
+      <div class="search-wrap" id="fInstWrap">
+        <input type="text" id="fInstInput" placeholder="Ketik nama instansi..." autocomplete="off"
+          oninput="fInstOnInput()" onfocus="fInstShow()" onkeydown="fInstKeyNav(event)">
+        <button class="x-btn" id="fInstClear" onclick="fInstClear()">✕</button>
+        <div class="srch-drop" id="fInstDrop"></div>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>PIC</label>
+      <div class="select-wrapper">
+        <select id="filterPIC" onchange="applyFilters()">
+          <option value="">Semua PIC</option>
+          <option>Okta Handi Suryadi, S.ST.Ars.</option>
+          <option>Aries Aprilliyan, S. Sej</option>
+          <option>Desti Trisfati Dwi Putri, SAP, M.A.P</option>
+          <option>Nurhayati, S.ST.Ars</option>
+          <option>Arum Esthu Domaz Kusumaning Bawono, S.AP</option>
+          <option>Siti Rubiati, S.IP.</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Status Progres</label>
+      <div class="select-wrapper">
+        <select id="filterProgres" onchange="applyFilters()">
+          <option value="">Semua Status</option>
+          <option>Diterima</option>
+          <option>Koordinasi awal dengan instansi pengusul</option>
+          <option>Verifikasi</option>
+          <option>Verifikasi Arsiparis Ahli Utama</option>
+          <option>Validasi ke Instansi</option>
+          <option>Proses TTE</option>
+          <option>Selesai (BA & Rekomendasi)</option>
+          <option>Surat Jawaban Perbaikan Penghitungan</option>
+          <option>Surat Jawaban</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>&nbsp;</label>
+      <button class="btn-reset" onclick="resetFilters()">↺ Reset Filter</button>
+    </div>
+  </div>
+</div>
+
+<div class="status-pills" id="statusPills"></div>
+
+<div class="table-section">
+  <div class="table-header">
+    <div class="table-count">Menampilkan <span id="countDisplay">0</span> instansi</div>
+    <div class="table-actions">
+      <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-add" onclick="openModal()">＋ Tambah Data</button>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('instansi')">Instansi</th>
+          <th onclick="sortBy('kategori')">Kategori</th>
+          <th onclick="sortBy('pic')">PIC</th>
+          <th onclick="sortBy('progres')">Progres</th>
+          <th onclick="sortBy('tanggalDisposisi')">Tgl Disposisi</th>
+          <th onclick="sortBy('hari')" style="text-align:center">Hari</th>
+          <th onclick="sortBy('jumlahOPD')" style="text-align:right">Unit Kerja/OPD</th>
+          <th onclick="sortBy('jumlahUsulan')" style="text-align:right">Usulan</th>
+          <th onclick="sortBy('jumlahRekomendasi')" style="text-align:right">Rekomendasi</th>
+          <th onclick="sortBy('nomorSuratRekomendasi')">Nomor Surat Rekomendasi</th>
+          <th onclick="sortBy('tanggalSuratRekomendasi')">Tanggal Surat Rekomendasi</th>
+          <th onclick="sortBy('linkDokumenSuratRekomendasi')">Link Dokumen Surat Rekomendasi</th>
+          <th onclick="sortBy('updateDiRekap')">Update di Rekap</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="icon">🔍</div>
+      <p>Tidak ada data yang sesuai filter</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Tambah Data Instansi</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="editIndex" value="-1">
+
+      <div class="form-group full">
+        <label>Instansi</label>
+        <div class="search-wrap" id="mInstWrap">
+          <input type="text" id="mInstInput" placeholder="Ketik untuk cari atau isi manual..." autocomplete="off"
+            oninput="mInstOnInput()" onfocus="mInstShow()" onkeydown="mInstKeyNav(event)">
+          <div class="srch-drop" id="mInstDrop"></div>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Kategori</label>
+        <div class="select-wrapper">
+          <select id="formKategori">
+            <option value="Instansi Pusat">Instansi Pusat</option>
+            <option value="Pemerintah Daerah Provinsi">Pemerintah Daerah Provinsi</option>
+            <option value="Pemerintah Daerah Kab/Kota">Pemerintah Daerah Kab/Kota</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>PIC</label>
+        <div class="select-wrapper">
+          <select id="formPIC">
+            <option>Okta Handi Suryadi, S.ST.Ars.</option>
+            <option>Aries Aprilliyan, S. Sej</option>
+            <option>Desti Trisfati Dwi Putri, SAP, M.A.P</option>
+            <option>Nurhayati, S.ST.Ars</option>
+            <option>Arum Esthu Domaz Kusumaning Bawono, S.AP</option>
+            <option>Siti Rubiati, S.IP.</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Status Progres</label>
+        <div class="select-wrapper">
+          <select id="formProgres">
+            <option>Diterima</option>
+            <option>Koordinasi awal dengan instansi pengusul</option>
+            <option>Verifikasi</option>
+            <option>Verifikasi Arsiparis Ahli Utama</option>
+            <option>Validasi ke Instansi</option>
+            <option>Proses TTE</option>
+            <option>Selesai (BA & Rekomendasi)</option>
+            <option>Surat Jawaban Perbaikan Penghitungan</option>
+            <option>Surat Jawaban</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tanggal Disposisi</label>
+        <input type="date" id="formTgl" oninput="updateHariPreview()">
+      </div>
+      <div class="form-group">
+        <label>Hari Progres (otomatis)</label>
+        <div class="hari-preview" id="hariPreview">— isi tanggal disposisi</div>
+      </div>
+
+      <div class="form-group">
+        <label>Unit Kerja/OPD</label>
+        <input type="number" id="formOPD" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>Jumlah Usulan</label>
+        <input type="number" id="formUsulan" min="0" value="0">
+      </div>
+      <div class="form-group full">
+        <label>Jumlah Rekomendasi</label>
+        <input type="number" id="formRek" min="0" value="0">
+      </div>
+      <div class="form-group full">
+        <label>Nomor Surat Rekomendasi</label>
+        <input type="text" id="formNomorSurat" placeholder="Contoh: B-123/ANRI/SDM.01/2026">
+      </div>
+      <div class="form-group">
+        <label>Tanggal Surat Rekomendasi</label>
+        <input type="date" id="formTglSurat">
+      </div>
+      <div class="form-group">
+        <label>Update di Rekap</label>
+        <input type="date" id="formUpdateRekap">
+      </div>
+      <div class="form-group full">
+        <label>Link Dokumen Surat Rekomendasi</label>
+        <input type="url" id="formLinkSurat" placeholder="https://...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-save" onclick="saveData()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script src="./supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ============ MASTER DATA ============
+const INSTANSI_PUSAT = [
+  "Kementerian Koordinator Bidang Politik dan Keamanan","Kementerian Dalam Negeri","Kementerian Luar Negeri",
+  "Kementerian Pertahanan","Kementerian Komunikasi dan Digital",
+  "Kementerian Koordinator Bidang Hukum HAM Imigrasi dan Pemasyarakatan",
+  "Kementerian Hukum","Kementerian HAM","Kementerian Imigrasi dan Pemasyarakatan",
+  "Kementerian Sekretariat Negara","Kementerian Perencanaan Pembangunan","Kementerian Keuangan",
+  "Kementerian Pendayagunaan Aparatur Negara dan Reformasi Birokrasi","Kementerian Agama",
+  "Kementerian Pekerjaan Umum","Kementerian Perumahan dan Kawasan Pemukiman",
+  "Badan Kepegawaian Negara","Badan Nasional Penanggulangan Bencana",
+  "Badan Pengawasan Keuangan dan Pembangunan","Badan Pusat Statistik",
+  "Badan Siber dan Sandi Negara","Badan Standardisasi Nasional","Balai Pangan Nasional",
+  "Kejaksaan Agung","Badan Intelijen Negara","Mahkamah Agung","Mahkamah Konstitusi",
+  "Radio Republik Indonesia","Badan Riset dan Inovasi Nasional",
+  "Badan Nasional Pengelola Perbatasan","Dewan Ketahanan Nasional","Komisi Kejaksaan",
+  "Komisi Anti Kekerasan Terhadap Perempuan","Komisi Penyiaran Indonesia",
+  "Komisi Perlindungan Anak Indonesia","Lembaga Sensor Film",
+  "Komite Nasional Keselamatan Transportasi","Otorisasi Jasa Keuangan",
+  "Akademi Ilmu Pengetahuan Indonesia","Badan Koordinasi Pemberantasan Rupiah Palsu",
+  "Badan Otorita Pengelola Kawasan Pariwisata Borobudur",
+  "Badan Otorita Pengelola Kawasan Pariwisata Danau Toba",
+  "Badan Otorita Pengelola Kawasan Pariwisata Labuhan Bajo Flores",
+  "Badan Pengembangan Kewirausahaan Nasional",
+  "Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Batam",
+  "Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Bintan",
+  "Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Karimun",
+  "Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Sabang",
+  "Dewan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Batam",
+  "Dewan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Bintan",
+  "Dewan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Karimun",
+  "Dewan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Sabang",
+  "Dewan Nasional Keuangan Inklusif","Komite Akreditasi Nasional",
+  "Komite Nasional Ekonomi dan Keuangan Syariah",
+  "Komite Pengamanan Perdagangan Indonesia","Komite Pengawas Perpajakan"
+];
+const PEMDA = {
+  "Nanggroe Aceh Darussalam":["Kab. Simeulue","Kab. Aceh Singkil","Kab. Aceh Selatan","Kab. Aceh Tenggara","Kab. Aceh Timur","Kab. Aceh Tengah","Kab. Aceh Barat","Kab. Aceh Besar","Kab. Pidie","Kab. Bireuen","Kab. Aceh Utara","Kab. Aceh Barat Daya","Kab. Gayo Lues","Kab. Aceh Tamiang","Kab. Nagan Raya","Kab. Aceh Jaya","Kab. Bener Meriah","Kab. Pidie Jaya","Kota Banda Aceh","Kota Sabang","Kota Langsa","Kota Lhokseumawe","Kota Subulussalam"],
+  "Sumatera Utara":["Kab. Nias","Kab. Mandailing Natal","Kab. Tapanuli Selatan","Kab. Tapanuli Tengah","Kab. Tapanuli Utara","Kab. Toba","Kab. Labuhanbatu","Kab. Asahan","Kab. Simalungun","Kab. Dairi","Kab. Karo","Kab. Deli Serdang","Kab. Langkat","Kab. Nias Selatan","Kab. Humbang Hasundutan","Kab. Pakpak Bharat","Kab. Samosir","Kab. Serdang Bedagai","Kab. Batu Bara","Kab. Padang Lawas Utara","Kab. Padang Lawas","Kab. Labuhanbatu Selatan","Kab. Labuhanbatu Utara","Kab. Nias Utara","Kab. Nias Barat","Kota Sibolga","Kota Tanjungbalai","Kota Pematangsiantar","Kota Tebing Tinggi","Kota Medan","Kota Binjai","Kota Padangsidimpuan","Kota Gunungsitoli"],
+  "Sumatera Barat":["Kab. Agam","Kab. Dharmasraya","Kab. Kepulauan Mentawai","Kab. Lima Puluh Kota","Kab. Padang Pariaman","Kab. Pasaman","Kab. Pasaman Barat","Kab. Pesisir Selatan","Kab. Sijunjung","Kab. Solok","Kab. Solok Selatan","Kab. Tanah Datar","Kota Padang","Kota Bukittinggi","Kota Padang Panjang","Kota Pariaman","Kota Payakumbuh","Kota Sawahlunto","Kota Solok"],
+  "Jawa Barat":["Kab. Bandung","Kab. Bandung Barat","Kab. Bekasi","Kab. Bogor","Kab. Ciamis","Kab. Cianjur","Kab. Cirebon","Kab. Garut","Kab. Indramayu","Kab. Karawang","Kab. Kuningan","Kab. Majalengka","Kab. Pangandaran","Kab. Purwakarta","Kab. Subang","Kab. Sukabumi","Kab. Sumedang","Kab. Tasikmalaya","Kota Bandung","Kota Banjar","Kota Bekasi","Kota Bogor","Kota Cimahi","Kota Cirebon","Kota Depok","Kota Sukabumi","Kota Tasikmalaya"],
+  "Banten":["Kab. Pandeglang","Kab. Lebak","Kab. Tangerang","Kab. Serang","Kota Cilegon","Kota Serang","Kota Tangerang","Kota Tangerang Selatan"],
+  "Kalimantan Utara":["Kab. Bulungan","Kab. Malinau","Kab. Nunukan","Kab. Tana Tidung","Kota Tarakan"],
+  "Kalimantan Barat":["Kab. Bengkayang","Kab. Kapuas Hulu","Kab. Kayong Utara","Kab. Ketapang","Kab. Kubu Raya","Kab. Landak","Kab. Melawi","Kab. Mempawah","Kab. Sambas","Kab. Sanggau","Kab. Sekadau","Kab. Sintang","Kota Pontianak","Kota Singkawang"],
+  "Sulawesi Utara":["Kab. Bolaang Mongondow","Kab. Bolaang Mongondow Selatan","Kab. Bolaang Mongondow Timur","Kab. Bolaang Mongondow Utara","Kab. Kepulauan Sangihe","Kab. Kepulauan Siau Tagulandang Biaro","Kab. Kepulauan Talaud","Kab. Minahasa","Kab. Minahasa Selatan","Kab. Minahasa Tenggara","Kab. Minahasa Utara","Kota Bitung","Kota Kotamobagu","Kota Manado","Kota Tomohon"],
+  "Sulawesi Barat":["Kab. Majene","Kab. Mamasa","Kab. Mamuju","Kab. Mamuju Tengah","Kab. Pasangkayu","Kab. Polewali Mandar"],
+  "Nusa Tenggara Barat":["Kab. Bima","Kab. Dompu","Kab. Lombok Barat","Kab. Lombok Tengah","Kab. Lombok Timur","Kab. Lombok Utara","Kab. Sumbawa","Kab. Sumbawa Barat","Kota Bima","Kota Mataram"],
+  "Maluku Utara":["Kab. Halmahera Barat","Kab. Halmahera Tengah","Kab. Halmahera Selatan","Kab. Halmahera Timur","Kab. Halmahera Utara","Kab. Kepulauan Sula","Kab. Pulau Morotai","Kab. Pulau Taliabu","Kota Ternate","Kota Tidore Kepulauan"],
+  "Papua Barat":["Kab. Fakfak","Kab. Kaimana","Kab. Manokwari","Kab. Manokwari Selatan","Kab. Maybrat","Kab. Pegunungan Arfak","Kab. Raja Ampat","Kab. Sorong","Kab. Sorong Selatan","Kab. Tambrauw","Kab. Teluk Bintuni","Kab. Teluk Wondama","Kota Sorong"],
+  "Papua Barat Daya":["Kab. Maybrat","Kab. Raja Ampat","Kab. Sorong","Kab. Sorong Selatan","Kab. Tambrauw","Kota Sorong"]
+};
+
+const ALL = [];
+INSTANSI_PUSAT.forEach(n => ALL.push({name:n, kat:'Instansi Pusat', sub:'Instansi Pusat'}));
+Object.entries(PEMDA).forEach(([prov, kabs]) => {
+  ALL.push({name:`Pemerintah Provinsi ${prov}`, kat:'Pemerintah Daerah Provinsi', sub:`Provinsi · ${prov}`});
+  kabs.forEach(k => ALL.push({name:k, kat:'Pemerintah Daerah Kab/Kota', sub:`Kab/Kota · ${prov}`}));
+});
+
+const PC = {
+  "Diterima":{cls:"s-diterima",label:"Diterima"},
+  "Koordinasi awal dengan instansi pengusul":{cls:"s-koordinasi",label:"Koordinasi Awal"},
+  "Verifikasi":{cls:"s-verifikasi",label:"Verifikasi"},
+  "Verifikasi Arsiparis Ahli Utama":{cls:"s-verifikasi-utama",label:"Verif. Ahli Utama"},
+  "Validasi ke Instansi":{cls:"s-validasi",label:"Validasi"},
+  "Proses TTE":{cls:"s-tte",label:"Proses TTE"},
+  "Selesai (BA & Rekomendasi)":{cls:"s-selesai",label:"Selesai"},
+  "Surat Jawaban Perbaikan Penghitungan":{cls:"s-perbaikan",label:"Surat Perbaikan"},
+  "Surat Jawaban":{cls:"s-surat",label:"Surat Jawaban"}
+};
+
+// ============ STATE ============
+const LOCAL_SEED = [
+  {instansi:"Kementerian Agama",kategori:"Instansi Pusat",pic:"Aries Aprilliyan, S. Sej",progres:"Verifikasi",tanggalDisposisi:"2026-03-10",jumlahOPD:3,jumlahUsulan:12,jumlahRekomendasi:8,nomorSuratRekomendasi:"",tanggalSuratRekomendasi:"",linkDokumenSuratRekomendasi:"",updateDiRekap:""},
+  {instansi:"Badan Kepegawaian Negara",kategori:"Instansi Pusat",pic:"Okta Handi Suryadi, S.ST.Ars.",progres:"Selesai (BA & Rekomendasi)",tanggalDisposisi:"2026-02-15",jumlahOPD:1,jumlahUsulan:5,jumlahRekomendasi:5,nomorSuratRekomendasi:"B-102/ANRI/SDM.01/2026",tanggalSuratRekomendasi:"2026-03-18",linkDokumenSuratRekomendasi:"https://example.com/surat-rekomendasi-bkn",updateDiRekap:"2026-03-19"},
+  {instansi:"Kementerian Keuangan",kategori:"Instansi Pusat",pic:"Nurhayati, S.ST.Ars",progres:"Proses TTE",tanggalDisposisi:"2026-03-20",jumlahOPD:2,jumlahUsulan:9,jumlahRekomendasi:7,nomorSuratRekomendasi:"",tanggalSuratRekomendasi:"",linkDokumenSuratRekomendasi:"",updateDiRekap:""},
+  {instansi:"Pemerintah Provinsi Jawa Barat",kategori:"Pemerintah Daerah Provinsi",pic:"Desti Trisfati Dwi Putri, SAP, M.A.P",progres:"Koordinasi awal dengan instansi pengusul",tanggalDisposisi:"2026-03-25",jumlahOPD:5,jumlahUsulan:18,jumlahRekomendasi:0,nomorSuratRekomendasi:"",tanggalSuratRekomendasi:"",linkDokumenSuratRekomendasi:"",updateDiRekap:""},
+  {instansi:"Kab. Tangerang",kategori:"Pemerintah Daerah Kab/Kota",pic:"Siti Rubiati, S.IP.",progres:"Diterima",tanggalDisposisi:"2026-04-01",jumlahOPD:1,jumlahUsulan:4,jumlahRekomendasi:0,nomorSuratRekomendasi:"",tanggalSuratRekomendasi:"",linkDokumenSuratRekomendasi:"",updateDiRekap:""},
+  {instansi:"Kota Bandung",kategori:"Pemerintah Daerah Kab/Kota",pic:"Arum Esthu Domaz Kusumaning Bawono, S.AP",progres:"Validasi ke Instansi",tanggalDisposisi:"2026-03-05",jumlahOPD:1,jumlahUsulan:6,jumlahRekomendasi:4,nomorSuratRekomendasi:"",tanggalSuratRekomendasi:"",linkDokumenSuratRekomendasi:"",updateDiRekap:""},
+];
+let data = [...LOCAL_SEED];
+let filtered = [...data];
+let sortField = null, sortAsc = true, activePill = null;
+let fInstVal = ''; // exact selected value for filter
+const customSelects = new Map();
+const SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
+  url: '',
+  anonKey: '',
+};
+const SUPABASE_TABLE = 'verifikasi_kebutuhan_jfa';
+let supabaseClient = null;
+let useSupabase = false;
+const ADMIN_CONFIG = {
+  username: SUPABASE_CONFIG.adminUsername || 'Admin',
+  email: (SUPABASE_CONFIG.adminEmail || '').toLowerCase(),
+};
+let isAdmin = false;
+
+// ============ HELPERS ============
+function hitungHari(tgl) {
+  if (!tgl) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.floor((today - new Date(tgl)) / 86400000);
+}
+function hariCls(h) { return h===null?'hari-none':h<=14?'hari-ok':h<=30?'hari-warn':'hari-danger'; }
+function fmtTgl(tgl) {
+  if (!tgl) return '—';
+  return new Date(tgl).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+}
+function escHtml(text) {
+  return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function hl(text, q) {
+  if (!q) return text;
+  return text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<strong>$1</strong>');
+}
+function getPool(katFilter) {
+  let pool = ALL.filter(i => !katFilter || i.kat === katFilter);
+  data.forEach(d => { if (!pool.find(p=>p.name===d.instansi)) pool.push({name:d.instansi,kat:d.kategori,sub:d.kategori}); });
+  return pool;
+}
+function hasSupabaseConfig() {
+  return !!(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
+}
+function initSupabase() {
+  if (!hasSupabaseConfig() || !window.supabase?.createClient) return;
+  supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+  useSupabase = true;
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    isAdmin = (session?.user?.email || '').toLowerCase() === ADMIN_CONFIG.email;
+    updateAdminUI();
+    renderTable();
+  });
+}
+function mapDbRow(row) {
+  return {
+    id: row.id,
+    instansi: row.nama_instansi,
+    kategori: row.kategori,
+    pic: row.pic,
+    progres: row.progres,
+    tanggalDisposisi: row.tanggal_disposisi || '',
+    jumlahOPD: row.jumlah_opd ?? 0,
+    jumlahUsulan: row.jumlah_usulan ?? 0,
+    jumlahRekomendasi: row.jumlah_rekomendasi ?? 0,
+    nomorSuratRekomendasi: row.nomor_surat_rekomendasi || '',
+    tanggalSuratRekomendasi: row.tanggal_surat_rekomendasi || '',
+    linkDokumenSuratRekomendasi: row.link_dokumen_surat_rekomendasi || '',
+    updateDiRekap: row.update_di_rekap || '',
+  };
+}
+function mapUiRowToDb(row) {
+  return {
+    ...(row.id ? { id: row.id } : {}),
+    nama_instansi: row.instansi,
+    kategori: row.kategori,
+    pic: row.pic,
+    progres: row.progres,
+    tanggal_disposisi: row.tanggalDisposisi || null,
+    jumlah_opd: row.jumlahOPD || 0,
+    jumlah_usulan: row.jumlahUsulan || 0,
+    jumlah_rekomendasi: row.jumlahRekomendasi || 0,
+    nomor_surat_rekomendasi: row.nomorSuratRekomendasi || null,
+    tanggal_surat_rekomendasi: row.tanggalSuratRekomendasi || null,
+    link_dokumen_surat_rekomendasi: row.linkDokumenSuratRekomendasi || null,
+    update_di_rekap: row.updateDiRekap || null,
+  };
+}
+async function loadDataFromSupabase() {
+  if (!useSupabase) {
+    data = [...LOCAL_SEED];
+    filtered = [...data];
+    return;
+  }
+  const { data: rows, error } = await supabaseClient
+    .from(SUPABASE_TABLE)
+    .select('*')
+    .order('updated_at', { ascending: false });
+  if (error) {
+    console.error('Gagal load Supabase:', error);
+    alert(`Gagal memuat data dari Supabase: ${error.message}`);
+    data = [...LOCAL_SEED];
+  } else {
+    data = (rows || []).map(mapDbRow);
+  }
+  filtered = [...data];
+}
+async function persistRow(row) {
+  if (!useSupabase) return row;
+  const payload = mapUiRowToDb(row);
+  const query = row.id
+    ? supabaseClient.from(SUPABASE_TABLE).update(payload).eq('id', row.id).select().single()
+    : supabaseClient.from(SUPABASE_TABLE).insert(payload).select().single();
+  const { data: savedRow, error } = await query;
+  if (error) throw error;
+  return mapDbRow(savedRow);
+}
+async function removeRow(row) {
+  if (!useSupabase || !row?.id) return;
+  const { error } = await supabaseClient.from(SUPABASE_TABLE).delete().eq('id', row.id);
+  if (error) throw error;
+}
+function updateAdminUI() {
+  const statusBtn = document.getElementById('adminStatusBtn');
+  const accessBtn = document.getElementById('adminAccessBtn');
+  const addBtn = document.querySelector('.btn-add');
+  if (statusBtn) statusBtn.textContent = isAdmin ? 'Admin aktif' : 'Mode baca';
+  if (accessBtn) accessBtn.textContent = isAdmin ? 'Logout Admin' : 'Login Admin';
+  if (accessBtn) accessBtn.onclick = isAdmin ? logoutAdmin : openAdminLogin;
+  if (statusBtn) statusBtn.onclick = isAdmin ? logoutAdmin : openAdminLogin;
+  if (addBtn) addBtn.disabled = !isAdmin;
+}
+async function restoreAdminSession() {
+  if (!useSupabase || !ADMIN_CONFIG.email) {
+    isAdmin = false;
+    updateAdminUI();
+    return;
+  }
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) {
+    console.error('Gagal cek session admin:', error);
+    isAdmin = false;
+  } else {
+    isAdmin = (data.session?.user?.email || '').toLowerCase() === ADMIN_CONFIG.email;
+  }
+  updateAdminUI();
+}
+function openAdminLogin() {
+  if (isAdmin) return logoutAdmin();
+  document.getElementById('adminUsername').value = ADMIN_CONFIG.username;
+  document.getElementById('adminPassword').value = '';
+  document.getElementById('adminHelpText').textContent = useSupabase
+    ? `Masuk sebagai ${ADMIN_CONFIG.username} untuk membuka fitur tambah, edit, dan hapus data.`
+    : 'Isi Supabase URL, anon key, dan admin email di supabase-config.js dulu agar login admin bisa dipakai di versi live.';
+  document.getElementById('adminModalOverlay').classList.add('open');
+}
+function closeAdminModal() {
+  document.getElementById('adminModalOverlay').classList.remove('open');
+}
+function closeAdminModalOutside(e) {
+  if (e.target === document.getElementById('adminModalOverlay')) closeAdminModal();
+}
+async function submitAdminLogin() {
+  const username = document.getElementById('adminUsername').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  if (username !== ADMIN_CONFIG.username) {
+    alert(`Username admin harus "${ADMIN_CONFIG.username}"`);
+    return;
+  }
+  if (!useSupabase || !ADMIN_CONFIG.email) {
+    alert('Supabase belum dikonfigurasi. Isi dulu supabase-config.js');
+    return;
+  }
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email: ADMIN_CONFIG.email,
+      password,
+    });
+    if (error) throw error;
+    isAdmin = true;
+    closeAdminModal();
+    updateAdminUI();
+    renderTable();
+  } catch (error) {
+    console.error('Login admin gagal:', error);
+    alert(`Login admin gagal: ${error.message}`);
+  }
+}
+async function logoutAdmin() {
+  if (useSupabase) {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      console.error('Logout admin gagal:', error);
+      alert(`Logout admin gagal: ${error.message}`);
+      return;
+    }
+  }
+  isAdmin = false;
+  updateAdminUI();
+  renderTable();
+}
+function guardAdminAction() {
+  if (isAdmin) return true;
+  alert('Fitur ini hanya bisa dipakai setelah login admin.');
+  openAdminLogin();
+  return false;
+}
+function closeCustomSelects(exceptId = null) {
+  customSelects.forEach((entry, id) => {
+    if (id !== exceptId) entry.wrapper.classList.remove('open');
+  });
+}
+function syncCustomSelect(selectOrId) {
+  const select = typeof selectOrId === 'string' ? document.getElementById(selectOrId) : selectOrId;
+  const entry = select ? customSelects.get(select.id) : null;
+  if (!entry) return;
+  const selected = select.options[select.selectedIndex];
+  entry.value.textContent = selected ? selected.textContent : '';
+  entry.menu.querySelectorAll('.custom-select-option').forEach((btn, idx) => {
+    btn.classList.toggle('is-selected', idx === select.selectedIndex);
+  });
+}
+function initCustomSelect(select) {
+  const wrapper = select.closest('.select-wrapper');
+  if (!wrapper || customSelects.has(select.id)) return;
+  wrapper.classList.add('custom-select');
+  select.classList.add('custom-native-select');
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'custom-select-trigger';
+  trigger.innerHTML = '<span class="custom-select-value"></span>';
+
+  const menu = document.createElement('div');
+  menu.className = 'custom-select-menu';
+
+  Array.from(select.options).forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'custom-select-option';
+    btn.textContent = opt.textContent;
+    btn.dataset.index = idx;
+    btn.addEventListener('click', () => {
+      select.selectedIndex = idx;
+      syncCustomSelect(select);
+      wrapper.classList.remove('open');
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    menu.appendChild(btn);
+  });
+
+  trigger.addEventListener('click', () => {
+    const willOpen = !wrapper.classList.contains('open');
+    closeCustomSelects(willOpen ? select.id : null);
+    wrapper.classList.toggle('open', willOpen);
+  });
+  trigger.addEventListener('keydown', e => {
+    if (e.key === 'Escape') wrapper.classList.remove('open');
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      closeCustomSelects(select.id);
+      wrapper.classList.add('open');
+      const active = menu.querySelector('.custom-select-option.is-selected') || menu.querySelector('.custom-select-option');
+      if (active) active.focus();
+    }
+  });
+  menu.addEventListener('keydown', e => {
+    const options = [...menu.querySelectorAll('.custom-select-option')];
+    const currentIndex = options.indexOf(document.activeElement);
+    if (e.key === 'Escape') {
+      wrapper.classList.remove('open');
+      trigger.focus();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      (options[Math.min(currentIndex + 1, options.length - 1)] || options[0])?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      (options[Math.max(currentIndex - 1, 0)] || options[0])?.focus();
+    }
+  });
+
+  wrapper.appendChild(trigger);
+  wrapper.appendChild(menu);
+  const value = trigger.querySelector('.custom-select-value');
+  customSelects.set(select.id, { wrapper, trigger, menu, value });
+  syncCustomSelect(select);
+}
+function initCustomSelects() {
+  document.querySelectorAll('.select-wrapper select[id]').forEach(initCustomSelect);
+}
+
+// ============ FILTER LIVE SEARCH ============
+let fItems = [], fIdx = -1;
+function fInstOnInput() {
+  fInstVal = '';
+  document.getElementById('fInstClear').classList.toggle('on', !!document.getElementById('fInstInput').value);
+  fInstShow();
+  applyFilters();
+}
+function fInstShow() {
+  const q = document.getElementById('fInstInput').value.trim().toLowerCase();
+  const kat = document.getElementById('filterKategori').value;
+  fItems = getPool(kat).filter(i => !q || i.name.toLowerCase().includes(q)).slice(0,20);
+  const drop = document.getElementById('fInstDrop');
+  drop.innerHTML = fItems.length
+    ? fItems.map((i,idx)=>`<div class="srch-opt" onmousedown="fInstSelect(${idx})">${hl(i.name,q)}<div class="sub">${i.sub}</div></div>`).join('')
+    : `<div class="srch-no">Tidak ditemukan</div>`;
+  drop.classList.add('open'); fIdx = -1;
+}
+function fInstSelect(idx) {
+  fInstVal = fItems[idx].name;
+  document.getElementById('fInstInput').value = fInstVal;
+  document.getElementById('fInstClear').classList.add('on');
+  document.getElementById('fInstDrop').classList.remove('open');
+  applyFilters();
+}
+function fInstClear() {
+  fInstVal=''; document.getElementById('fInstInput').value='';
+  document.getElementById('fInstClear').classList.remove('on');
+  document.getElementById('fInstDrop').classList.remove('open');
+  applyFilters();
+}
+function fInstKeyNav(e) {
+  const opts = document.getElementById('fInstDrop').querySelectorAll('.srch-opt');
+  if (e.key==='ArrowDown'){fIdx=Math.min(fIdx+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('hl',i===fIdx));e.preventDefault();}
+  else if (e.key==='ArrowUp'){fIdx=Math.max(fIdx-1,0);opts.forEach((o,i)=>o.classList.toggle('hl',i===fIdx));e.preventDefault();}
+  else if (e.key==='Enter'&&fIdx>=0){fInstSelect(fIdx);e.preventDefault();}
+  else if (e.key==='Escape'){document.getElementById('fInstDrop').classList.remove('open');}
+}
+
+// ============ MODAL LIVE SEARCH ============
+let mItems=[], mIdx=-1;
+function mInstOnInput() {
+  const q = document.getElementById('mInstInput').value.trim().toLowerCase();
+  mItems = ALL.filter(i => !q || i.name.toLowerCase().includes(q)).slice(0,20);
+  const drop = document.getElementById('mInstDrop');
+  drop.innerHTML = mItems.length
+    ? mItems.map((i,idx)=>`<div class="srch-opt" onmousedown="mInstSelect(${idx})">${hl(i.name,q)}<div class="sub">${i.sub}</div></div>`).join('')
+    : `<div class="srch-no">Tidak ditemukan — bisa isi manual</div>`;
+  drop.classList.add('open'); mIdx=-1;
+}
+function mInstShow() { if(document.getElementById('mInstInput').value) mInstOnInput(); }
+function mInstSelect(idx) {
+  document.getElementById('mInstInput').value = mItems[idx].name;
+  document.getElementById('formKategori').value = mItems[idx].kat;
+  syncCustomSelect('formKategori');
+  document.getElementById('mInstDrop').classList.remove('open');
+}
+function mInstKeyNav(e) {
+  const opts = document.getElementById('mInstDrop').querySelectorAll('.srch-opt');
+  if (e.key==='ArrowDown'){mIdx=Math.min(mIdx+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('hl',i===mIdx));e.preventDefault();}
+  else if (e.key==='ArrowUp'){mIdx=Math.max(mIdx-1,0);opts.forEach((o,i)=>o.classList.toggle('hl',i===mIdx));e.preventDefault();}
+  else if (e.key==='Enter'&&mIdx>=0){mInstSelect(mIdx);e.preventDefault();}
+  else if (e.key==='Escape'){document.getElementById('mInstDrop').classList.remove('open');}
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+  if (!document.getElementById('fInstWrap').contains(e.target)) document.getElementById('fInstDrop').classList.remove('open');
+  if (!document.getElementById('mInstWrap').contains(e.target)) document.getElementById('mInstDrop').classList.remove('open');
+  if (!e.target.closest('.select-wrapper')) closeCustomSelects();
+});
+
+// ============ HARI PREVIEW ============
+function updateHariPreview() {
+  const tgl = document.getElementById('formTgl').value;
+  const h = hitungHari(tgl);
+  const el = document.getElementById('hariPreview');
+  if (h===null) { el.innerHTML='— isi tanggal disposisi'; return; }
+  const col = h<=14?'#2e7d32':h<=30?'#f57f17':'#c62828';
+  el.innerHTML = `<span style="color:${col};font-weight:700">${h} hari</span>&nbsp;sejak disposisi`;
+}
+
+// ============ SUMMARY ============
+function renderSummary() {
+  const t=data.length, sel=data.filter(d=>d.progres==='Selesai (BA & Rekomendasi)').length;
+  const tU=data.reduce((s,d)=>s+(d.jumlahUsulan||0),0), tR=data.reduce((s,d)=>s+(d.jumlahRekomendasi||0),0);
+  const tO=data.reduce((s,d)=>s+(d.jumlahOPD||0),0);
+  const hArr=data.filter(d=>d.tanggalDisposisi).map(d=>hitungHari(d.tanggalDisposisi));
+  const hRata=hArr.length?Math.round(hArr.reduce((s,v)=>s+v,0)/hArr.length):null;
+  const pusat=data.filter(d=>d.kategori==='Instansi Pusat').length;
+  const pemda=data.filter(d=>d.kategori!=='Instansi Pusat').length;
+  document.getElementById('summaryCards').innerHTML=`
+    <div class="card highlight"><div class="card-label">Total Instansi</div><div class="card-value">${t}</div><div class="card-sub">${pusat} pusat · ${pemda} daerah</div></div>
+    <div class="card"><div class="card-label">Selesai</div><div class="card-value">${sel}</div><div class="card-sub">${t>0?Math.round(sel/t*100):0}% dari total</div></div>
+    <div class="card"><div class="card-label">Rata-rata Hari</div><div class="card-value">${hRata!==null?hRata:'—'}</div><div class="card-sub">hari sejak disposisi</div></div>
+    <div class="card"><div class="card-label">Unit Kerja/OPD</div><div class="card-value">${tO}</div><div class="card-sub">terdaftar</div></div>
+    <div class="card"><div class="card-label">Total Usulan</div><div class="card-value">${tU}</div><div class="card-sub">arsiparis diusulkan</div></div>
+    <div class="card"><div class="card-label">Total Rekomendasi</div><div class="card-value">${tR}</div><div class="card-sub">${tU>0?Math.round(tR/tU*100):0}% dari usulan</div></div>
+  `;
+}
+
+// ============ PILLS ============
+function renderPills() {
+  const keys=Object.keys(PC);
+  document.getElementById('statusPills').innerHTML=
+    `<div class="pill ${activePill===null?'active':''}" onclick="setPill(null)">Semua (${data.length})</div>`+
+    keys.map(k=>`<div class="pill ${activePill===k?'active':''}" onclick="setPill('${k.replace(/'/g,"\\'")}')">
+      ${PC[k].label} (${data.filter(d=>d.progres===k).length})</div>`).join('');
+}
+function setPill(s) {
+  activePill=s;
+  document.getElementById('filterProgres').value=s||'';
+  syncCustomSelect('filterProgres');
+  renderPills(); applyFilters();
+}
+
+// ============ FILTER & TABLE ============
+function applyFilters() {
+  const kat=document.getElementById('filterKategori').value;
+  const pic=document.getElementById('filterPIC').value;
+  const prog=document.getElementById('filterProgres').value;
+  const q=document.getElementById('fInstInput').value.trim().toLowerCase();
+  filtered=data.filter(d=>{
+    if(kat&&d.kategori!==kat)return false;
+    if(pic&&d.pic!==pic)return false;
+    if(prog&&d.progres!==prog)return false;
+    if(fInstVal){if(d.instansi!==fInstVal)return false;}
+    else if(q){if(!d.instansi.toLowerCase().includes(q))return false;}
+    return true;
+  });
+  if(sortField)doSort(false);
+  renderTable();
+}
+function resetFilters(){
+  document.getElementById('filterKategori').value='';
+  document.getElementById('fInstInput').value='';
+  document.getElementById('fInstClear').classList.remove('on');
+  document.getElementById('filterPIC').value='';
+  document.getElementById('filterProgres').value='';
+  syncCustomSelect('filterKategori');
+  syncCustomSelect('filterPIC');
+  syncCustomSelect('filterProgres');
+  fInstVal=''; activePill=null;
+  renderPills(); applyFilters();
+}
+function sortBy(f){
+  if(sortField===f)sortAsc=!sortAsc; else{sortField=f;sortAsc=true;}
+  doSort(true);
+}
+function doSort(render=true){
+  filtered.sort((a,b)=>{
+    let av=a[sortField],bv=b[sortField];
+    if(sortField==='hari'){av=hitungHari(a.tanggalDisposisi)??999999;bv=hitungHari(b.tanggalDisposisi)??999999;}
+    if(typeof av==='number')return sortAsc?av-bv:bv-av;
+    return sortAsc?String(av||'').localeCompare(String(bv||'')):String(bv||'').localeCompare(String(av||''));
+  });
+  if(render)renderTable();
+}
+function renderTable(){
+  const tbody=document.getElementById('tableBody'),empty=document.getElementById('emptyState');
+  document.getElementById('countDisplay').textContent=filtered.length;
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const cC={'Instansi Pusat':'cat-pusat','Pemerintah Daerah Provinsi':'cat-provinsi','Pemerintah Daerah Kab/Kota':'cat-kabkota'};
+  const cL={'Instansi Pusat':'Pusat','Pemerintah Daerah Provinsi':'Provinsi','Pemerintah Daerah Kab/Kota':'Kab/Kota'};
+  tbody.innerHTML=filtered.map(row=>{
+    const ri=data.indexOf(row),pc=PC[row.progres]||{cls:'',label:row.progres};
+    const h=hitungHari(row.tanggalDisposisi);
+    const hHtml=h!==null?`<span class="hari-badge ${hariCls(h)}">${h}h</span>`:`<span class="hari-badge hari-none">—</span>`;
+    return`<tr>
+      <td><div class="inst-name">${row.instansi}</div></td>
+      <td><span class="cat-tag ${cC[row.kategori]||''}">${cL[row.kategori]||row.kategori}</span></td>
+      <td><div class="pic-nm">${row.pic}</div></td>
+      <td><span class="status-badge ${pc.cls}"><span class="status-dot"></span>${pc.label}</span></td>
+      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.tanggalDisposisi)}</td>
+      <td style="text-align:center">${hHtml}</td>
+      <td class="num-cell">${row.jumlahOPD}</td>
+      <td class="num-cell">${row.jumlahUsulan}</td>
+      <td class="num-cell">${row.jumlahRekomendasi}</td>
+      <td>${row.nomorSuratRekomendasi ? `<div class="pic-nm">${escHtml(row.nomorSuratRekomendasi)}</div>` : `<span class="muted-cell">â€”</span>`}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.tanggalSuratRekomendasi)}</td>
+      <td>${row.linkDokumenSuratRekomendasi ? `<a class="link-doc" href="${escHtml(row.linkDokumenSuratRekomendasi)}" target="_blank" rel="noopener noreferrer">Buka dokumen</a>` : `<span class="muted-cell">â€”</span>`}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.updateDiRekap)}</td>
+      <td><div class="action-btns">
+        <button class="btn-icon" onclick="editData(${ri})" title="Edit">✏️</button>
+        <button class="btn-icon danger" onclick="deleteData(${ri})" title="Hapus">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ============ CRUD ============
+function openModal(){
+  if (!guardAdminAction()) return;
+  document.getElementById('editIndex').value=-1;
+  document.getElementById('modalTitle').textContent='Tambah Data Instansi';
+  document.getElementById('mInstInput').value='';
+  document.getElementById('formKategori').value='Instansi Pusat';
+  document.getElementById('formPIC').value='Okta Handi Suryadi, S.ST.Ars.';
+  document.getElementById('formProgres').value='Diterima';
+  syncCustomSelect('formKategori');
+  syncCustomSelect('formPIC');
+  syncCustomSelect('formProgres');
+  document.getElementById('formTgl').value='';
+  document.getElementById('hariPreview').innerHTML='— isi tanggal disposisi';
+  document.getElementById('formOPD').value=0;
+  document.getElementById('formUsulan').value=0;
+  document.getElementById('formRek').value=0;
+  document.getElementById('formNomorSurat').value='';
+  document.getElementById('formTglSurat').value='';
+  document.getElementById('formLinkSurat').value='';
+  document.getElementById('formUpdateRekap').value='';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function editData(i){
+  if (!guardAdminAction()) return;
+  const r=data[i];
+  document.getElementById('editIndex').value=i;
+  document.getElementById('modalTitle').textContent='Edit Data Instansi';
+  document.getElementById('mInstInput').value=r.instansi;
+  document.getElementById('formKategori').value=r.kategori;
+  document.getElementById('formPIC').value=r.pic;
+  document.getElementById('formProgres').value=r.progres;
+  syncCustomSelect('formKategori');
+  syncCustomSelect('formPIC');
+  syncCustomSelect('formProgres');
+  document.getElementById('formTgl').value=r.tanggalDisposisi||'';
+  document.getElementById('formOPD').value=r.jumlahOPD;
+  document.getElementById('formUsulan').value=r.jumlahUsulan;
+  document.getElementById('formRek').value=r.jumlahRekomendasi;
+  document.getElementById('formNomorSurat').value=r.nomorSuratRekomendasi||'';
+  document.getElementById('formTglSurat').value=r.tanggalSuratRekomendasi||'';
+  document.getElementById('formLinkSurat').value=r.linkDokumenSuratRekomendasi||'';
+  document.getElementById('formUpdateRekap').value=r.updateDiRekap||'';
+  updateHariPreview();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+async function deleteData(i){
+  if (!guardAdminAction()) return;
+  if(!confirm(`Hapus "${data[i].instansi}"?`)) return;
+  try {
+    await removeRow(data[i]);
+    data.splice(i,1);
+    renderSummary(); renderPills(); applyFilters();
+    document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  } catch (error) {
+    console.error('Gagal menghapus data:', error);
+    alert(`Gagal menghapus data: ${error.message}`);
+  }
+}
+async function saveData(){
+  if (!guardAdminAction()) return;
+  const inst=document.getElementById('mInstInput').value.trim();
+  if(!inst){alert('Isi nama instansi!');return;}
+  const row={
+    ...(parseInt(document.getElementById('editIndex').value) >= 0 && data[parseInt(document.getElementById('editIndex').value)]?.id
+      ? { id: data[parseInt(document.getElementById('editIndex').value)].id }
+      : {}),
+    instansi:inst, kategori:document.getElementById('formKategori').value,
+    pic:document.getElementById('formPIC').value, progres:document.getElementById('formProgres').value,
+    tanggalDisposisi:document.getElementById('formTgl').value||'',
+    jumlahOPD:parseInt(document.getElementById('formOPD').value)||0,
+    jumlahUsulan:parseInt(document.getElementById('formUsulan').value)||0,
+    jumlahRekomendasi:parseInt(document.getElementById('formRek').value)||0,
+    nomorSuratRekomendasi:document.getElementById('formNomorSurat').value.trim(),
+    tanggalSuratRekomendasi:document.getElementById('formTglSurat').value||'',
+    linkDokumenSuratRekomendasi:document.getElementById('formLinkSurat').value.trim(),
+    updateDiRekap:document.getElementById('formUpdateRekap').value||'',
+  };
+  const idx=parseInt(document.getElementById('editIndex').value);
+  try {
+    const savedRow = await persistRow(row);
+    if(idx>=0)data[idx]=savedRow; else data.push(savedRow);
+    closeModal(); renderSummary(); renderPills(); applyFilters();
+    document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  } catch (error) {
+    console.error('Gagal menyimpan data:', error);
+    alert(`Gagal menyimpan data: ${error.message}`);
+  }
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+
+// ============ EXPORT ============
+function exportCSV(){
+  const h=['Instansi','Kategori','PIC','Progres','Tgl Disposisi','Hari Progres','Unit Kerja/OPD','Jumlah Usulan','Jumlah Rekomendasi','Nomor Surat Rekomendasi','Tanggal Surat Rekomendasi','Link Dokumen Surat Rekomendasi','Update di Rekap'];
+  const rows=filtered.map(d=>[d.instansi,d.kategori,d.pic,d.progres,d.tanggalDisposisi||'',hitungHari(d.tanggalDisposisi)??'',d.jumlahOPD,d.jumlahUsulan,d.jumlahRekomendasi,d.nomorSuratRekomendasi||'',d.tanggalSuratRekomendasi||'',d.linkDokumenSuratRekomendasi||'',d.updateDiRekap||'']);
+  const csv=[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`progres_verifikasi_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ============ INIT ============
+async function boot() {
+  document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  initCustomSelects();
+  initSupabase();
+  await restoreAdminSession();
+  await loadDataFromSupabase();
+  renderSummary();
+  renderPills();
+  applyFilters();
+  updateAdminUI();
+}
+
+boot();
+</script>
+</body>
+</html>
