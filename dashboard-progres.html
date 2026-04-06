@@ -1024,12 +1024,348 @@
     padding: 16px;
   }
 </style>
+<style>
+  .header-icon {
+    overflow: hidden;
+    position: relative;
+  }
+  .header-icon.logo-fallback {
+    background: linear-gradient(135deg, #0b8bdc, #0d6fd1);
+  }
+  .header-icon.logo-fallback::after {
+    content: "ANRI";
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+  .header-icon.logo-fallback img {
+    display: none;
+  }
+
+  .analytics-section {
+    position: relative;
+    z-index: 1;
+    margin: 0 32px 22px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr 1.1fr;
+    gap: 16px;
+  }
+  .viz-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.5));
+    border: 1px solid rgba(255,255,255,0.76);
+    border-radius: 24px;
+    box-shadow: 0 18px 48px rgba(29,45,74,0.12), inset 0 1px 0 rgba(255,255,255,0.84);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    padding: 18px 18px 16px;
+  }
+  .viz-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--apple-muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .viz-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .viz-row {
+    display: grid;
+    grid-template-columns: minmax(110px, 1fr) 1.4fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .viz-label {
+    font-size: 12px;
+    color: var(--apple-subtext);
+    font-weight: 700;
+  }
+  .viz-track {
+    height: 10px;
+    background: rgba(136,153,184,0.14);
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+  .viz-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4da5ff, #0071e3);
+  }
+  .viz-value {
+    font-size: 12px;
+    color: var(--apple-text);
+    font-weight: 800;
+    min-width: 44px;
+    text-align: right;
+  }
+  .viz-donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .viz-donut {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.68);
+  }
+  .viz-donut::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    background: rgba(247,250,255,0.92);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
+  }
+  .viz-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    text-align: center;
+  }
+  .viz-donut-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--apple-text);
+    letter-spacing: -0.03em;
+  }
+  .viz-donut-sub {
+    font-size: 11px;
+    color: var(--apple-subtext);
+    margin-top: 2px;
+  }
+  .viz-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .viz-legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--apple-subtext);
+    font-weight: 700;
+  }
+  .viz-legend-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .viz-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .viz-highlight {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .viz-stat {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.7);
+  }
+  .viz-stat-label {
+    font-size: 11px;
+    color: var(--apple-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .viz-stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--apple-text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .viz-stat-sub {
+    margin-top: 6px;
+    color: var(--apple-subtext);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  @media (max-width: 1024px) {
+    .analytics-section {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 768px) {
+    .analytics-section {
+      margin: 0 16px 18px;
+    }
+    .viz-row {
+      grid-template-columns: 1fr;
+    }
+    .viz-value {
+      text-align: left;
+    }
+    .viz-donut-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .viz-highlight {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<style>
+  .summary-section {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap: 12px !important;
+  }
+  .card {
+    padding: 16px 16px 14px !important;
+    border-radius: 20px !important;
+  }
+  .card-value { font-size: 28px !important; }
+  .analytics-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin-top: -4px;
+    align-items: stretch;
+  }
+  .viz-card {
+    padding: 16px 16px 14px !important;
+    border-radius: 20px !important;
+    height: 100%;
+  }
+  .viz-title { margin-bottom: 12px !important; }
+  .filter-section { padding: 18px 20px !important; }
+  .filter-grid {
+    grid-template-columns: 1.1fr 1.4fr 1fr 1fr auto !important;
+    gap: 12px !important;
+  }
+  .table-header { margin-bottom: 10px !important; }
+  .table-wrapper { border-radius: 22px !important; }
+  table { min-width: 1040px !important; }
+  thead th {
+    padding: 12px 14px !important;
+    font-size: 10px !important;
+    text-align: center !important;
+  }
+  tbody td {
+    padding: 11px 14px !important;
+    font-size: 12px !important;
+  }
+  .inst-name {
+    font-size: 13px !important;
+    margin-bottom: 4px;
+  }
+  .inst-meta,
+  .cell-stack,
+  .timeline-stack,
+  .surat-stack,
+  .doc-stack,
+  .metric-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .meta-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .meta-text,
+  .mini-text {
+    font-size: 11px;
+    color: var(--apple-subtext);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .metric-chip {
+    padding: 8px 9px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.56);
+    border: 1px solid rgba(255,255,255,0.76);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+    text-align: center;
+  }
+  .metric-chip .k {
+    display: block;
+    font-size: 10px;
+    color: var(--apple-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    font-weight: 800;
+  }
+  .metric-chip .v {
+    display: block;
+    font-size: 15px;
+    color: var(--apple-text);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .surat-number {
+    font-size: 12px;
+    color: var(--apple-text);
+    font-weight: 700;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .cell-title {
+    font-size: 10px;
+    color: var(--apple-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+  }
+  .action-btns { justify-content: flex-end; }
+  .viz-pic-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .viz-pic-item {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 1.2fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .viz-pic-name {
+    font-size: 12px;
+    color: var(--apple-text);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  @media (max-width: 1180px) {
+    .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    .analytics-section { grid-template-columns: 1fr !important; }
+  }
+</style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
-    <div class="header-icon"><img src="./logo-anri.png" alt="Logo ANRI"></div>
+    <div class="header-icon"><img src="./logo-anri.png?v=1" alt="Logo ANRI" loading="eager" onerror="this.parentElement.classList.add('logo-fallback')"></div>
     <div>
       <div class="header-title">Dashboard Progres Verifikasi Kebutuhan Jabatan Fungsional Arsiparis</div>
       <div class="header-sub">Direktorat SDM Kearsipan & Sertifikasi · ANRI</div>
@@ -1043,6 +1379,8 @@
 </div>
 
 <div class="summary-section" id="summaryCards"></div>
+
+<div class="analytics-section" id="analyticsSection"></div>
 
 <div class="modal-overlay" id="adminModalOverlay" onclick="closeAdminModalOutside(event)">
   <div class="modal" style="max-width:480px">
@@ -1104,6 +1442,7 @@
           <option>Nurhayati, S.ST.Ars</option>
           <option>Arum Esthu Domaz Kusumaning Bawono, S.AP</option>
           <option>Siti Rubiati, S.IP.</option>
+          <option>Ramadhona Aswin, S.Kom</option>
         </select>
       </div>
     </div>
@@ -1146,18 +1485,11 @@
       <thead>
         <tr>
           <th onclick="sortBy('instansi')">Instansi</th>
-          <th onclick="sortBy('kategori')">Kategori</th>
-          <th onclick="sortBy('pic')">PIC</th>
-          <th onclick="sortBy('progres')">Progres</th>
-          <th onclick="sortBy('tanggalDisposisi')">Tgl Disposisi</th>
-          <th onclick="sortBy('hari')" style="text-align:center">Hari</th>
-          <th onclick="sortBy('jumlahOPD')" style="text-align:right">Unit Kerja/OPD</th>
-          <th onclick="sortBy('jumlahUsulan')" style="text-align:right">Usulan</th>
-          <th onclick="sortBy('jumlahRekomendasi')" style="text-align:right">Rekomendasi</th>
-          <th onclick="sortBy('nomorSuratRekomendasi')">Nomor Surat Rekomendasi</th>
-          <th onclick="sortBy('tanggalSuratRekomendasi')">Tanggal Surat Rekomendasi</th>
-          <th onclick="sortBy('linkDokumenSuratRekomendasi')">Link Dokumen Surat Rekomendasi</th>
-          <th onclick="sortBy('updateDiRekap')">Update di Rekap</th>
+          <th onclick="sortBy('pic')">PIC & Progres</th>
+          <th onclick="sortBy('tanggalDisposisi')">Timeline</th>
+          <th onclick="sortBy('jumlahUsulan')">Kuantitas</th>
+          <th onclick="sortBy('nomorSuratRekomendasi')">Surat Rekomendasi</th>
+          <th onclick="sortBy('updateDiRekap')">Dokumen & Rekap</th>
           <th></th>
         </tr>
       </thead>
@@ -1210,6 +1542,7 @@
             <option>Nurhayati, S.ST.Ars</option>
             <option>Arum Esthu Domaz Kusumaning Bawono, S.AP</option>
             <option>Siti Rubiati, S.IP.</option>
+            <option>Ramadhona Aswin, S.Kom</option>
           </select>
         </div>
       </div>
@@ -1377,10 +1710,12 @@ const ADMIN_CONFIG = {
 let isAdmin = false;
 
 // ============ HELPERS ============
-function hitungHari(tgl) {
-  if (!tgl) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.floor((today - new Date(tgl)) / 86400000);
+function hitungHari(tglMulai, tglSelesai = '') {
+  if (!tglMulai) return null;
+  const start = new Date(tglMulai); start.setHours(0,0,0,0);
+  const end = tglSelesai ? new Date(tglSelesai) : new Date();
+  end.setHours(0,0,0,0);
+  return Math.floor((end - start) / 86400000);
 }
 function hariCls(h) { return h===null?'hari-none':h<=14?'hari-ok':h<=30?'hari-warn':'hari-danger'; }
 function fmtTgl(tgl) {
@@ -1518,7 +1853,7 @@ function closeAdminModal() {
   document.getElementById('adminModalOverlay').classList.remove('open');
 }
 function closeAdminModalOutside(e) {
-  if (e.target === document.getElementById('adminModalOverlay')) closeAdminModal();
+  return;
 }
 async function submitAdminLogin() {
   const username = document.getElementById('adminUsername').value.trim();
@@ -1724,11 +2059,12 @@ document.addEventListener('click', e => {
 // ============ HARI PREVIEW ============
 function updateHariPreview() {
   const tgl = document.getElementById('formTgl').value;
-  const h = hitungHari(tgl);
+  const tglSurat = document.getElementById('formTglSurat').value;
+  const h = hitungHari(tgl, tglSurat);
   const el = document.getElementById('hariPreview');
   if (h===null) { el.innerHTML='— isi tanggal disposisi'; return; }
   const col = h<=14?'#2e7d32':h<=30?'#f57f17':'#c62828';
-  el.innerHTML = `<span style="color:${col};font-weight:700">${h} hari</span>&nbsp;sejak disposisi`;
+  el.innerHTML = `<span style="color:${col};font-weight:700">${h} hari</span>&nbsp;dari disposisi${tglSurat ? ' sampai surat rekomendasi' : ' sampai hari ini'}`;
 }
 
 // ============ SUMMARY ============
@@ -1736,7 +2072,7 @@ function renderSummary() {
   const t=data.length, sel=data.filter(d=>d.progres==='Selesai (BA & Rekomendasi)').length;
   const tU=data.reduce((s,d)=>s+(d.jumlahUsulan||0),0), tR=data.reduce((s,d)=>s+(d.jumlahRekomendasi||0),0);
   const tO=data.reduce((s,d)=>s+(d.jumlahOPD||0),0);
-  const hArr=data.filter(d=>d.tanggalDisposisi).map(d=>hitungHari(d.tanggalDisposisi));
+  const hArr=data.filter(d=>d.tanggalDisposisi).map(d=>hitungHari(d.tanggalDisposisi, d.tanggalSuratRekomendasi));
   const hRata=hArr.length?Math.round(hArr.reduce((s,v)=>s+v,0)/hArr.length):null;
   const pusat=data.filter(d=>d.kategori==='Instansi Pusat').length;
   const pemda=data.filter(d=>d.kategori!=='Instansi Pusat').length;
@@ -1747,6 +2083,126 @@ function renderSummary() {
     <div class="card"><div class="card-label">Unit Kerja/OPD</div><div class="card-value">${tO}</div><div class="card-sub">terdaftar</div></div>
     <div class="card"><div class="card-label">Total Usulan</div><div class="card-value">${tU}</div><div class="card-sub">arsiparis diusulkan</div></div>
     <div class="card"><div class="card-label">Total Rekomendasi</div><div class="card-value">${tR}</div><div class="card-sub">${tU>0?Math.round(tR/tU*100):0}% dari usulan</div></div>
+  `;
+}
+function renderAnalytics() {
+  const total = data.length || 1;
+  const kategoriMap = [
+    { label: 'Instansi Pusat', key: 'Instansi Pusat', color: '#0a84ff' },
+    { label: 'Pemda Provinsi', key: 'Pemerintah Daerah Provinsi', color: '#5e5ce6' },
+    { label: 'Pemda Kab/Kota', key: 'Pemerintah Daerah Kab/Kota', color: '#ff9f0a' },
+  ];
+  const kategoriRows = kategoriMap.map(item => {
+    const count = data.filter(d => d.kategori === item.key).length;
+    return { ...item, count, pct: Math.round((count / total) * 100) };
+  });
+  const statusRows = [
+    { label: 'Selesai', key: 'Selesai (BA & Rekomendasi)', color: '#34c759' },
+    { label: 'Verifikasi', key: 'Verifikasi', color: '#bf5af2' },
+    { label: 'Validasi', key: 'Validasi ke Instansi', color: '#32ade6' },
+    { label: 'TTE', key: 'Proses TTE', color: '#30d158' },
+  ].map(item => {
+    const count = data.filter(d => d.progres === item.key).length;
+    return { ...item, count, pct: Math.round((count / total) * 100) };
+  });
+  const selesai = data.filter(d => d.progres === 'Selesai (BA & Rekomendasi)').length;
+  const selesaiPct = Math.round((selesai / total) * 100);
+  const rataUsulan = data.length ? Math.round(data.reduce((s,d)=>s+(d.jumlahUsulan||0),0) / data.length) : 0;
+  const rataRekom = data.length ? Math.round(data.reduce((s,d)=>s+(d.jumlahRekomendasi||0),0) / data.length) : 0;
+  const picRows = [...new Set(data.map(d => d.pic).filter(Boolean))].map(name => {
+    const rows = data.filter(d => d.pic === name);
+    const count = rows.length;
+    const selesaiPic = rows.filter(d => d.progres === 'Selesai (BA & Rekomendasi)').length;
+    const bobotPic = rows.reduce((sum, row) => sum + (row.jumlahUsulan || 0), 0);
+    return {
+      name,
+      count,
+      pct: Math.round((count / total) * 100),
+      selesaiPct: count ? Math.round((selesaiPic / count) * 100) : 0,
+      bobotPic,
+    };
+  }).sort((a,b) => b.count - a.count || b.bobotPic - a.bobotPic).slice(0, 6);
+  const donutBg = `conic-gradient(${kategoriRows.map((item, index) => {
+    const start = kategoriRows.slice(0, index).reduce((sum, row) => sum + row.pct, 0);
+    const end = start + item.pct;
+    return `${item.color} ${start}% ${end}%`;
+  }).join(', ')}, rgba(214,224,240,0.34) 0 100%)`;
+
+  document.getElementById('analyticsSection').innerHTML = `
+    <div class="viz-card">
+      <div class="viz-title">Persentase Progres</div>
+      <div class="viz-stack">
+        ${statusRows.map(row => `
+          <div class="viz-row">
+            <div class="viz-label">${row.label}</div>
+            <div class="viz-track"><div class="viz-bar" style="width:${row.pct}%; background:linear-gradient(90deg, ${row.color}, #0071e3)"></div></div>
+            <div class="viz-value">${row.count} (${row.pct}%)</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-title">Jenis Instansi</div>
+      <div class="viz-donut-wrap">
+        <div class="viz-donut" style="background:${donutBg}">
+          <div class="viz-donut-center">
+            <div class="viz-donut-number">${data.length}</div>
+            <div class="viz-donut-sub">instansi</div>
+          </div>
+        </div>
+        <div class="viz-legend">
+          ${kategoriRows.map(row => `
+            <div class="viz-legend-item">
+              <div class="viz-legend-left"><span class="viz-dot" style="background:${row.color}"></span>${row.label}</div>
+              <span>${row.count}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-title">Highlight Operasional</div>
+      <div class="viz-highlight">
+        <div class="viz-stat">
+          <div class="viz-stat-label">Selesai</div>
+          <div class="viz-stat-value">${selesaiPct}%</div>
+          <div class="viz-stat-sub">${selesai} instansi sudah selesai</div>
+        </div>
+        <div class="viz-stat">
+          <div class="viz-stat-label">Rata Usulan</div>
+          <div class="viz-stat-value">${rataUsulan}</div>
+          <div class="viz-stat-sub">per instansi</div>
+        </div>
+        <div class="viz-stat">
+          <div class="viz-stat-label">Rata Rekom.</div>
+          <div class="viz-stat-value">${rataRekom}</div>
+          <div class="viz-stat-sub">per instansi</div>
+        </div>
+        <div class="viz-stat">
+          <div class="viz-stat-label">Belum Selesai</div>
+          <div class="viz-stat-value">${Math.max(data.length - selesai, 0)}</div>
+          <div class="viz-stat-sub">masih perlu tindak lanjut</div>
+        </div>
+      </div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-title">Distribusi PIC</div>
+      <div class="viz-pic-grid">
+        ${picRows.map(row => `
+          <div class="viz-pic-item">
+            <div class="viz-pic-name">${row.name}</div>
+            <div class="viz-track"><div class="viz-bar" style="width:${row.pct}%; background:linear-gradient(90deg, #5e5ce6, #0a84ff)"></div></div>
+            <div class="viz-value">${row.count} (${row.pct}%)</div>
+          </div>
+          <div class="viz-row" style="grid-template-columns:minmax(120px,1fr) 1.2fr auto;">
+            <div class="viz-label">Selesai PIC</div>
+            <div class="viz-track"><div class="viz-bar" style="width:${row.selesaiPct}%; background:linear-gradient(90deg, #34c759, #0a84ff)"></div></div>
+            <div class="viz-value">${row.selesaiPct}%</div>
+          </div>
+          <div class="mini-text" style="margin-top:-4px">Total usulan PIC: <strong>${row.bobotPic}</strong></div>
+        `).join('')}
+      </div>
+    </div>
   `;
 }
 
@@ -1801,7 +2257,7 @@ function sortBy(f){
 function doSort(render=true){
   filtered.sort((a,b)=>{
     let av=a[sortField],bv=b[sortField];
-    if(sortField==='hari'){av=hitungHari(a.tanggalDisposisi)??999999;bv=hitungHari(b.tanggalDisposisi)??999999;}
+    if(sortField==='hari'){av=hitungHari(a.tanggalDisposisi, a.tanggalSuratRekomendasi)??999999;bv=hitungHari(b.tanggalDisposisi, b.tanggalSuratRekomendasi)??999999;}
     if(typeof av==='number')return sortAsc?av-bv:bv-av;
     return sortAsc?String(av||'').localeCompare(String(bv||'')):String(bv||'').localeCompare(String(av||''));
   });
@@ -1816,22 +2272,51 @@ function renderTable(){
   const cL={'Instansi Pusat':'Pusat','Pemerintah Daerah Provinsi':'Provinsi','Pemerintah Daerah Kab/Kota':'Kab/Kota'};
   tbody.innerHTML=filtered.map(row=>{
     const ri=data.indexOf(row),pc=PC[row.progres]||{cls:'',label:row.progres};
-    const h=hitungHari(row.tanggalDisposisi);
+    const h=hitungHari(row.tanggalDisposisi, row.tanggalSuratRekomendasi);
     const hHtml=h!==null?`<span class="hari-badge ${hariCls(h)}">${h}h</span>`:`<span class="hari-badge hari-none">—</span>`;
+    const suratNomor = row.nomorSuratRekomendasi ? `<div class="surat-number">${escHtml(row.nomorSuratRekomendasi)}</div>` : `<span class="muted-cell">â€”</span>`;
+    const dokumenHtml = row.linkDokumenSuratRekomendasi ? `<a class="link-doc" href="${escHtml(row.linkDokumenSuratRekomendasi)}" target="_blank" rel="noopener noreferrer">Buka dokumen</a>` : `<span class="muted-cell">â€”</span>`;
     return`<tr>
-      <td><div class="inst-name">${row.instansi}</div></td>
-      <td><span class="cat-tag ${cC[row.kategori]||''}">${cL[row.kategori]||row.kategori}</span></td>
-      <td><div class="pic-nm">${row.pic}</div></td>
-      <td><span class="status-badge ${pc.cls}"><span class="status-dot"></span>${pc.label}</span></td>
-      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.tanggalDisposisi)}</td>
-      <td style="text-align:center">${hHtml}</td>
-      <td class="num-cell">${row.jumlahOPD}</td>
-      <td class="num-cell">${row.jumlahUsulan}</td>
-      <td class="num-cell">${row.jumlahRekomendasi}</td>
-      <td>${row.nomorSuratRekomendasi ? `<div class="pic-nm">${escHtml(row.nomorSuratRekomendasi)}</div>` : `<span class="muted-cell">â€”</span>`}</td>
-      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.tanggalSuratRekomendasi)}</td>
-      <td>${row.linkDokumenSuratRekomendasi ? `<a class="link-doc" href="${escHtml(row.linkDokumenSuratRekomendasi)}" target="_blank" rel="noopener noreferrer">Buka dokumen</a>` : `<span class="muted-cell">â€”</span>`}</td>
-      <td style="font-size:12px;color:var(--text-secondary)">${fmtTgl(row.updateDiRekap)}</td>
+      <td>
+        <div class="inst-meta">
+          <div class="inst-name">${row.instansi}</div>
+          <div class="meta-line"><span class="cat-tag ${cC[row.kategori]||''}">${cL[row.kategori]||row.kategori}</span></div>
+        </div>
+      </td>
+      <td>
+        <div class="cell-stack">
+          <div class="pic-nm">${row.pic}</div>
+          <div><span class="status-badge ${pc.cls}"><span class="status-dot"></span>${pc.label}</span></div>
+        </div>
+      </td>
+      <td>
+        <div class="timeline-stack">
+          <div class="mini-text">Disposisi: ${fmtTgl(row.tanggalDisposisi)}</div>
+          <div>${hHtml}</div>
+          <div class="mini-text">Surat: ${fmtTgl(row.tanggalSuratRekomendasi)}</div>
+        </div>
+      </td>
+      <td>
+        <div class="metric-grid">
+          <div class="metric-chip"><span class="k">OPD</span><span class="v">${row.jumlahOPD}</span></div>
+          <div class="metric-chip"><span class="k">Usulan</span><span class="v">${row.jumlahUsulan}</span></div>
+          <div class="metric-chip"><span class="k">Rekom.</span><span class="v">${row.jumlahRekomendasi}</span></div>
+        </div>
+      </td>
+      <td>
+        <div class="surat-stack">
+          <div class="cell-title">Nomor</div>
+          ${suratNomor}
+          <div class="mini-text">Tanggal: ${fmtTgl(row.tanggalSuratRekomendasi)}</div>
+        </div>
+      </td>
+      <td>
+        <div class="doc-stack">
+          <div class="cell-title">Dokumen</div>
+          <div>${dokumenHtml}</div>
+          <div class="mini-text">Rekap: ${fmtTgl(row.updateDiRekap)}</div>
+        </div>
+      </td>
       <td><div class="action-btns">
         <button class="btn-icon" onclick="editData(${ri})" title="Edit">✏️</button>
         <button class="btn-icon danger" onclick="deleteData(${ri})" title="Hapus">🗑</button>
@@ -1892,7 +2377,7 @@ async function deleteData(i){
   try {
     await removeRow(data[i]);
     data.splice(i,1);
-    renderSummary(); renderPills(); applyFilters();
+    renderSummary(); renderAnalytics(); renderPills(); applyFilters();
     document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   } catch (error) {
     console.error('Gagal menghapus data:', error);
@@ -1922,7 +2407,7 @@ async function saveData(){
   try {
     const savedRow = await persistRow(row);
     if(idx>=0)data[idx]=savedRow; else data.push(savedRow);
-    closeModal(); renderSummary(); renderPills(); applyFilters();
+    closeModal(); renderSummary(); renderAnalytics(); renderPills(); applyFilters();
     document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   } catch (error) {
     console.error('Gagal menyimpan data:', error);
@@ -1930,12 +2415,12 @@ async function saveData(){
   }
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+function closeModalOutside(e){return;}
 
 // ============ EXPORT ============
 function exportCSV(){
   const h=['Instansi','Kategori','PIC','Progres','Tgl Disposisi','Hari Progres','Unit Kerja/OPD','Jumlah Usulan','Jumlah Rekomendasi','Nomor Surat Rekomendasi','Tanggal Surat Rekomendasi','Link Dokumen Surat Rekomendasi','Update di Rekap'];
-  const rows=filtered.map(d=>[d.instansi,d.kategori,d.pic,d.progres,d.tanggalDisposisi||'',hitungHari(d.tanggalDisposisi)??'',d.jumlahOPD,d.jumlahUsulan,d.jumlahRekomendasi,d.nomorSuratRekomendasi||'',d.tanggalSuratRekomendasi||'',d.linkDokumenSuratRekomendasi||'',d.updateDiRekap||'']);
+  const rows=filtered.map(d=>[d.instansi,d.kategori,d.pic,d.progres,d.tanggalDisposisi||'',hitungHari(d.tanggalDisposisi, d.tanggalSuratRekomendasi)??'',d.jumlahOPD,d.jumlahUsulan,d.jumlahRekomendasi,d.nomorSuratRekomendasi||'',d.tanggalSuratRekomendasi||'',d.linkDokumenSuratRekomendasi||'',d.updateDiRekap||'']);
   const csv=[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
@@ -1951,6 +2436,7 @@ async function boot() {
   await restoreAdminSession();
   await loadDataFromSupabase();
   renderSummary();
+  renderAnalytics();
   renderPills();
   applyFilters();
   updateAdminUI();
